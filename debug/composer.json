@@ -1,0 +1,21 @@
+{
+    "name": "simplified/debug",
+    "description": "Simplified debug module",
+    "type": "lib",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Bratfisch",
+            "email": "duskman72@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+    	"simplified/dbal":"1.x"
+    },
+    "autoload": {
+        "psr-4": {
+            "Simplified\\Debug":"src/"
+        }
+    }
+}

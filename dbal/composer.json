@@ -1,0 +1,19 @@
+{
+    "name": "simplified/dbal",
+    "description": "Simplified config module",
+    "type": "lib",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Bratfisch",
+            "email": "duskman72@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Simplified\\DBAL":"src/"
+        }
+    }
+}
