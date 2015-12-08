@@ -28,6 +28,7 @@ class Kernel {
         $req = Request::createFromGlobals();
         $path = $req->path();
         $current_route = null;
+        $matches = array();
 
         foreach ($this->routes->toArray() as $key => $route) {
             $route_path = $route['path'];
@@ -83,7 +84,16 @@ class Kernel {
             // TODO catch content
             $ref = new \ReflectionFunction ($current_route['closure']);
             if ($ref->getNumberOfParameters() > 0) {
-                $current_route['closure'] ($req);
+                // TODO check parameter types
+                $params = array();
+                $first = $ref->getParameters()[0];
+                if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
+                    $params[] = $req;
+
+                foreach ($matches as $match) {
+                    $params[] = $match;
+                }
+                call_user_func_array($current_route['closure'], $params);
             }
             else {
                 $current_route['closure'] ();
@@ -106,7 +116,24 @@ class Kernel {
         if (!method_exists($controller, $method))
             throw new ResourceNotFoundException("Unable to call $controller::$method()");
 
-        // TODO catch content
-        call_user_func(array(new $controller, $method));
+        $ref = new \ReflectionClass ($controller);
+        $num_params = $ref->getMethod($method)->getNumberOfParameters();
+        if ($num_params > 0) {
+            $ref_method = $ref->getMethod($method);
+            $params = array();
+            $first = $ref_method->getParameters()[0];
+            if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
+                $params[] = $req;
+            foreach ($matches as $match) {
+                $params[] = $match;
+            }
+
+            // TODO catch content
+            call_user_func_array(array(new $controller, $method), $params);
+        }
+        else {
+            // TODO catch content
+            call_user_func(array(new $controller, $method));
+        }
     }
 }
