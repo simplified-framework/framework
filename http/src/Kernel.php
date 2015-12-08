@@ -65,11 +65,6 @@ class Kernel {
                     throw new MethodNotAllowedException("Method " . $req->method() . " not allowed.");
 
                 array_shift($matches); // remove first element
-
-                print "<p>pattern $pattern matched:</p>";
-                print "<p><pre>";
-                var_dump($matches);
-                print "</pre></p>";
                 $current_route = $route;
                 break;
             }
@@ -81,10 +76,8 @@ class Kernel {
 
         // if we use a closure, call them with the request object
         if ($current_route['closure']) {
-            // TODO catch content
             $ref = new \ReflectionFunction ($current_route['closure']);
             if ($ref->getNumberOfParameters() > 0) {
-                // TODO check parameter types
                 $params = array();
                 $first = $ref->getParameters()[0];
                 if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
@@ -93,9 +86,11 @@ class Kernel {
                 foreach ($matches as $match) {
                     $params[] = $match;
                 }
+                // TODO catch content
                 call_user_func_array($current_route['closure'], $params);
             }
             else {
+                // TODO catch content
                 $current_route['closure'] ();
             }
 
