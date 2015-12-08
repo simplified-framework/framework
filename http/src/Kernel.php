@@ -82,9 +82,13 @@ class Kernel {
         if ($current_route['closure']) {
             // TODO catch content
             $ref = new \ReflectionFunction ($current_route['closure']);
-            print_r($ref->getParameters()[0]->getClass());
-            //var_dump($ref);
-            $current_route['closure'] ($req);
+            if ($ref->getNumberOfParameters() > 0) {
+                $current_route['closure'] ($req);
+            }
+            else {
+                $current_route['closure'] ();
+            }
+
             return;
         }
 
