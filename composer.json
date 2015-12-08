@@ -11,13 +11,12 @@
     },
     "autoload": {
         "psr-4": {
-        	"App\\":"app/",
-			"Simplified\\Config\\":"config/src/",
-			"Simplified\\Debug\\":"debug/src/",
-			"Simplified\\Core\\":"core/src/",
-			"Simplified\\DBAL\\":"dbal/src/",
-			"Simplified\\http\\":"http/src/",
-			"Simplified\\Orm\\":"orm/src/"
+		"Simplified\\Config\\":"config/src/",
+		"Simplified\\Debug\\":"debug/src/",
+		"Simplified\\Core\\":"core/src/",
+		"Simplified\\DBAL\\":"dbal/src/",
+		"Simplified\\http\\":"http/src/",
+		"Simplified\\Orm\\":"orm/src/"
         }
     }
 }
