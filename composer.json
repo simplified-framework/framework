@@ -8,7 +8,6 @@
         }
     ],
     "require": {
-        "twig/twig": "*"
     },
     "autoload": {
         "psr-4": {
