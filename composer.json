@@ -15,7 +15,7 @@
 		"Simplified\\Debug\\":"debug/src/",
 		"Simplified\\Core\\":"core/src/",
 		"Simplified\\DBAL\\":"dbal/src/",
-		"Simplified\\http\\":"http/src/",
+		"Simplified\\Http\\":"http/src/",
 		"Simplified\\Orm\\":"orm/src/"
         }
     }
