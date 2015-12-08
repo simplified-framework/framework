@@ -1,0 +1,8 @@
+/Bundle
+/Simplified
+/.idea
+/.buildpath
+/composer.lock
+/composer.phar
+/vendor/simplified
+*.zip

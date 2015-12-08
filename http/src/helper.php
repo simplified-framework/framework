@@ -1,7 +1,11 @@
 <?php
 
-/* http helper functions */
+namespace App\Controllers;
 
-function route($xxx) {
-	print "IN FUNCTION " . __FUNCTION__ . " with arg $xxx";
+use Simplified\Http\Request;
+
+class Controller {
+    public function newIndex(Request $req, $arg1, $arg2) {
+        print route("meine.");
+    }
 }
