@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Controllers;
+/* http helper functions */
 
-use Simplified\Http\Request;
+use Simplified\Http\Route;
 
-class Controller {
-    public function newIndex(Request $req, $arg1, $arg2) {
-        print route("meine.");
-    }
+function route($name) {
+	$routes = Route::getCollection();
+	if (isset($routes[$name])) {
+		return $routes[$name]['path'];
+	}
+	
+	throw new \Exception("No route named $name found");
 }
