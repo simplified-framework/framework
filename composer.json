@@ -17,6 +17,9 @@
 		"Simplified\\DBAL\\":"dbal/src/",
 		"Simplified\\Http\\":"http/src/",
 		"Simplified\\Orm\\":"orm/src/"
-        }
+        },
+		"files": [
+			"http/src/helper.php"
+		]
     }
 }
