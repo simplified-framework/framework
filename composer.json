@@ -11,12 +11,12 @@
     },
     "autoload": {
         "psr-4": {
-		"Simplified\\Config\\":"framework/config/src/",
-		"Simplified\\Debug\\":"framework/debug/src/",
-		"Simplified\\Core\\":"framework/core/src/",
-		"Simplified\\DBAL\\":"framework/dbal/src/",
-		"Simplified\\http\\":"framework/http/src/",
-		"Simplified\\Orm\\":"framework/orm/src/"
+		"Simplified\\Config\\":"config/src/",
+		"Simplified\\Debug\\":"debug/src/",
+		"Simplified\\Core\\":"core/src/",
+		"Simplified\\DBAL\\":"dbal/src/",
+		"Simplified\\http\\":"http/src/",
+		"Simplified\\Orm\\":"orm/src/"
         }
     }
 }
