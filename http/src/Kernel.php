@@ -24,6 +24,7 @@ class Kernel {
     }
 
     public function handleRequest() {
+    	ob_start ();
         $req = Request::createFromGlobals();
         $path = $req->path();
         $current_route = null;
@@ -139,11 +140,14 @@ class Kernel {
             $content = call_user_func(array(new $controller, $method));
         }
         
-        flush();
-        if (headers_sent()) {
-        	print "Headers sent. (2)";
+        ob_end_flush ();
+        
+        $file = null;
+        $line = null;
+        if (headers_sent($file, $line)) {
+        	print "Headers sent. (2), $file => $line";
         } else {
-        	print "nothing was sent. (2)";
+        	print "nothing was not sent. (2) $file => $line";
         }
     }
 }
