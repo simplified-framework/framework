@@ -104,7 +104,7 @@ class ErrorHandler {
 		<head><title>Exception</title>'.self::$css.'</head>
 		<body>
 		<div class="wrapper">
-		<h3>Uncaught '.get_class($e).'on Server '.$_SERVER['SERVER_NAME'].' at port '.$_SERVER['SERVER_PORT'].'</h3>
+		<h3>Uncaught '.get_class($e).' on Server '.$_SERVER['SERVER_NAME'].' at port '.$_SERVER['SERVER_PORT'].'</h3>
 		<div class="message">'.$e->getMessage().'</div>
 		<h4>Stack Trace:</h4>
 		<div>
