@@ -94,7 +94,7 @@ class Kernel {
                 $content = $current_route['closure'] ();
             }
             
-	        $clean_content = ob_end_clean();
+	        $clean_content = ob_get_clean ();
 	        if ($clean_content != null) {
 	        	print $clean_content;
 	        }
@@ -141,7 +141,7 @@ class Kernel {
             $content = call_user_func(array(new $controller, $method));
         }
         
-        $clean_content = ob_end_clean();
+        $clean_content = ob_get_clean ();
         if ($clean_content != null) {
         	print $clean_content;
         }
