@@ -294,7 +294,7 @@ class ErrorHandler {
             print json_encode(array('error' => true, 'message' => 'Internal Server Error<br>'.$message));
         } else {
         	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-        	print "HEEEE";
+        	// TODO check for debug. If not, send error page
             print $html;
         }
     }
