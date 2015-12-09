@@ -139,6 +139,7 @@ class Kernel {
             $content = call_user_func(array(new $controller, $method));
         }
         
+        flush();
         if (headers_sent()) {
         	print "Headers sent. (2)";
         } else {
