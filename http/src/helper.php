@@ -3,12 +3,23 @@
 /* http helper functions */
 
 use Simplified\Http\Route;
+use Simplified\Http\ResourceNotFoundException;
 
 function route($name) {
 	$routes = Route::getCollection();
 	if (isset($routes[$name])) {
-		return $routes[$name]['path'];
+		$item = $routes[$name]['path'];
+		if (func_num_args() == 2) {
+			$params = func_get_arg(1);
+            $keys = array_keys($params);
+
+            foreach ($keys as $key) {
+                $item = str_replace("{".$key."}", $params[$key], $item);
+            }
+		}
+        return $item;
 	}
-	
-	throw new \Exception("No route named $name found");
+
+    var_dump($routes);
+	throw new ResourceNotFoundException("No route named $name found. " . $routes->count());
 }
