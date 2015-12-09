@@ -1,5 +1,7 @@
 /Bundle
 /Simplified
+/.project
+/.settings
 /.idea
 /.buildpath
 /composer.lock

@@ -2,7 +2,6 @@
 
 namespace Simplified\Http;
 
-use Simplified\Core\Collection;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Debug\Debug;
 
