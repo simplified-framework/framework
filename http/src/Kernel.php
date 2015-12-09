@@ -87,19 +87,20 @@ class Kernel {
                 foreach ($matches as $match) {
                     $params[] = $match;
                 }
-                // TODO catch content
+
                 $content = call_user_func_array($current_route['closure'], $params);
             }
             else {
-                // TODO catch content
                 $content = $current_route['closure'] ();
             }
             
-            if (headers_sent()) {
-            	print "Headers sent. (1)";
-            } else {
-            	print "nothing was sent. (1)";
-            }
+	        $clean_content = ob_end_clean();
+	        if ($clean_content != null) {
+	        	print $clean_content;
+	        }
+	        if ($content != null) {
+	        	print $content;
+	        }
 
             return;
         }
@@ -140,14 +141,12 @@ class Kernel {
             $content = call_user_func(array(new $controller, $method));
         }
         
-        ob_end_flush ();
-        
-        $file = null;
-        $line = null;
-        if (headers_sent($file, $line)) {
-        	print "Headers sent. (2), $file => $line";
-        } else {
-        	print "nothing was not sent. (2) $file => $line";
+        $clean_content = ob_end_clean();
+        if ($clean_content != null) {
+        	print $clean_content;
+        }
+        if ($content != null) {
+        	print $content;
         }
     }
 }
