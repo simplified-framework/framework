@@ -133,11 +133,9 @@ class Kernel {
                 $params[] = $match;
             }
 
-            // TODO catch content
             $content = call_user_func_array(array(new $controller, $method), $params);
         }
         else {
-            // TODO catch content
             $content = call_user_func(array(new $controller, $method));
         }
         
