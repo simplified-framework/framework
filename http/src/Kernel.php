@@ -75,6 +75,7 @@ class Kernel {
 
         // if we use a closure, call them with the request object
         if ($current_route['closure']) {
+        	$content = null;
             $ref = new \ReflectionFunction ($current_route['closure']);
             if ($ref->getNumberOfParameters() > 0) {
                 $params = array();
@@ -86,11 +87,17 @@ class Kernel {
                     $params[] = $match;
                 }
                 // TODO catch content
-                call_user_func_array($current_route['closure'], $params);
+                $content = call_user_func_array($current_route['closure'], $params);
             }
             else {
                 // TODO catch content
-                $current_route['closure'] ();
+                $content = $current_route['closure'] ();
+            }
+            
+            if (headers_sent()) {
+            	print "Headers sent. (1)";
+            } else {
+            	print "nothing was sent. (1)";
             }
 
             return;
@@ -112,6 +119,8 @@ class Kernel {
 
         $ref = new \ReflectionClass ($controller);
         $num_params = $ref->getMethod($method)->getNumberOfParameters();
+        $content = null;
+        
         if ($num_params > 0) {
             $ref_method = $ref->getMethod($method);
             $params = array();
@@ -123,11 +132,17 @@ class Kernel {
             }
 
             // TODO catch content
-            call_user_func_array(array(new $controller, $method), $params);
+            $content = call_user_func_array(array(new $controller, $method), $params);
         }
         else {
             // TODO catch content
-            call_user_func(array(new $controller, $method));
+            $content = call_user_func(array(new $controller, $method));
+        }
+        
+        if (headers_sent()) {
+        	print "Headers sent. (2)";
+        } else {
+        	print "nothing was sent. (2)";
         }
     }
 }
