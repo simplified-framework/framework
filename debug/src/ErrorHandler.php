@@ -308,13 +308,13 @@ class ErrorHandler {
     	// Remove whitespace
     	$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
     	// Enable GZip encoding.
-    	ob_start("ob_gzhandler");
+    	//ob_start("ob_gzhandler");
     	// Enable caching
-    	header('Cache-Control: public');
+    	//header('Cache-Control: public');
     	// Expire in one day
-    	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
+    	//header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
     	// Set the correct MIME type, because Apache won't set it for us
-    	header("Content-type: text/css");
+    	//header("Content-type: text/css");
     	// Write everything out
     	return $buffer;
     }
