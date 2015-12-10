@@ -99,9 +99,11 @@ class ErrorHandler {
 
         $stacktrace = implode('<br>', $stacktrace);
 
+        
+        
         $html = '
 		<html>
-		<head><title>Exception</title>'.self::$css.'</head>
+		<head><title>Exception</title>'.self::compressCss().'</head>
 		<body>
 		<div class="wrapper">
 		<h3>Uncaught '.get_class($e).' on Server '.$_SERVER['SERVER_NAME'].' at port '.$_SERVER['SERVER_PORT'].'</h3>
@@ -150,7 +152,7 @@ class ErrorHandler {
 
         $html = '
 		<html>
-		<head><title>Exception</title>'.self::$css.'</head>
+		<head><title>Exception</title>'.self::compressCss().'</head>
 		<body>
 		<div class="wrapper">
 		<h3>Error on Server '.$_SERVER['SERVER_NAME'].' at port '.$_SERVER['SERVER_PORT'].'</h3>
@@ -221,7 +223,7 @@ class ErrorHandler {
 
             $html = '
 			<html>
-			<head><title>Exception</title>'.self::$css.'</head>
+			<head><title>Exception</title>'.self::compressCss().'</head>
 			<body>
 			<div class="wrapper">
 			<h3>Error on Server '.$_SERVER['SERVER_NAME'].' at port '.$_SERVER['SERVER_PORT'].'</h3>
@@ -297,5 +299,23 @@ class ErrorHandler {
         	// TODO check for debug. If not, send error page
             print $html;
         }
+    }
+    
+    private static function compressCss() {
+    	$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', self::$css);
+    	// Remove space after colons
+    	$buffer = str_replace(': ', ':', $buffer);
+    	// Remove whitespace
+    	$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+    	// Enable GZip encoding.
+    	ob_start("ob_gzhandler");
+    	// Enable caching
+    	header('Cache-Control: public');
+    	// Expire in one day
+    	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
+    	// Set the correct MIME type, because Apache won't set it for us
+    	header("Content-type: text/css");
+    	// Write everything out
+    	return $buffer;
     }
 }
