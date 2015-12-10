@@ -44,7 +44,7 @@ class Lang {
         if (!file_exists($filepath)) {
         	$filepath = self::$fallback . $parts[0] . ".php";
         	if (!file_exists($filepath)) {
-        		throw new LanguageException('Unable to open translation file at ' . $filepath);
+        		throw new LanguageException('Unable to open default translation file at ' . $filepath);
         	}
         }
 
@@ -59,5 +59,7 @@ class Lang {
         $translatedText = $translations[$parts[1]];
         
 		// TODO replace placeholders
+		
+        return $translatedText;
 	}
 }
