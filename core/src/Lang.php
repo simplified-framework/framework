@@ -34,7 +34,7 @@ class Lang {
         $lang_filepath = self::$i18n . $parts[0] . ".php";
 
         if (!file_exists($lang_filepath)) {
-        	throw new LanguageException('Unable to open translation file at ' . $filepath);
+        	throw new LanguageException('Unable to open translation file at ' . $lang_filepath);
         }
 
 		// load language file
