@@ -31,13 +31,22 @@ class Lang {
             throw new LanguageException('No namespace in translation value found.');
 
         $parts = explode(".", $key);
-        $filepath = self::$i18n . $parts[0] . ".php";
+        $lang_filepath = self::$i18n . $parts[0] . ".php";
 
-        if (!file_exists($filepath))
-            throw new LanguageException('Unable to open translation file at ' . $filepath);
+        if (!file_exists($lang_filepath)) {
+        	throw new LanguageException('Unable to open translation file at ' . $filepath);
+        }
 
-		// TODO load language file
-
+		// load language file
+		$loader = new PHPFileLoader();
+        $translations = $loader->load($lang_filepath, array());
+        
+        if (!isset($translations[$parts[1]])) {
+        	throw new LanguageException('Unable to find translation for ' . $parts[1]);
+        }
+        
+        $translatedText = $translations[$parts[1]];
+        
 		// TODO replace placeholders
 	}
 }
