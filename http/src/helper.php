@@ -2,13 +2,13 @@
 
 /* http helper functions */
 
-use Simplified\Http\Route;
+use Simplified\Http\RouteCollection;
 use Simplified\Http\ResourceNotFoundException;
 
 function route($name) {
-	$routes = Route::getCollection();
+	$routes = RouteCollection::instance();
 	if (isset($routes[$name])) {
-		$item = $routes[$name]['path'];
+		$item = $routes[$name]->path;
 		if (func_num_args() == 2) {
 			$params = func_get_arg(1);
             $keys = array_keys($params);
@@ -20,6 +20,5 @@ function route($name) {
         return $item;
 	}
 
-    var_dump($routes);
 	throw new ResourceNotFoundException("No route named $name found. " . $routes->count());
 }

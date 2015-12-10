@@ -4,7 +4,7 @@ namespace Simplified\Core;
 
 
 class Collection implements \Countable, \ArrayAccess, \Iterator, Arrayable {
-
+    protected $items;
     public function __construct($items = array()) {
         $this->items = array();
         $this->pointer = 0;

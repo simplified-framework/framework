@@ -12,30 +12,25 @@ Debug::handleDebug();
 require CONFIG_PATH . 'routes.php';
 
 class Kernel {
-    private $routes;
-    public function __construct() {
-        // load declared routes
-        $routes = Route::getCollection();
-
-        if ($routes->count() == 0)
-            throw new \ErrorException('Unable to load routes from configuration directory.');
-
-        $this->routes = $routes;
-    }
-
     public function handleRequest() {
     	ob_start ();
+
+        // load declared routes
+        $routes = RouteCollection::instance()->toArray();
+
+        if ($routes == null || count($routes) == 0)
+            throw new \ErrorException('Unable to load routes from configuration directory.');
+
         $req = Request::createFromGlobals();
         $path = $req->path();
         $current_route = null;
         $matches = array();
 
-        foreach ($this->routes->toArray() as $key => $route) {
-            $route_path = $route['path'];
-
+        foreach ($routes as $route) {
+            $route_path = $route->path;
             // current route is equal to configured route
-            if ($route_path == $path) {
-                if ($route['method'] != $req->method())
+            if ($route_path === $path) {
+                if ($route->method != $req->method())
                     throw new MethodNotAllowedException("Method " . $req->method() . " not allowed.");
 
                 $current_route = $route;
@@ -44,24 +39,28 @@ class Kernel {
 
             // find route with regex
             $matches = array();
-            // check if route has a condition to match
-            // if so, loop through conditions and replace theme here
-            // else, use standard pattern
             $pattern = str_replace("/", "\\/", $route_path);
-            if ( count($route['conditions']) > 0 ) {
-                foreach ($route['conditions'] as $key => $val) {
+            if ( count($route->conditions) > 0 ) {
+                foreach ($route->conditions as $key => $val) {
                     $pattern = str_replace("{".$key."}", "($val)", $pattern);
                 }
             } else {
-                $pattern = preg_replace('/(\{[a-zA-Z]+\})/', "([a-zA-Z0-9-_]+)", $pattern);
+                $pattern = str_replace('{[a-zA-Z]+\}', "([a-zA-Z]+)", $pattern);
             }
 
             // compile pattern
-            preg_match('/'.$pattern.'$/', $path, $matches);
+            if (0 === preg_match('/'.$pattern.'/', $path, $matches)) {
+                throw new ResourceNotFoundException('Route not found: ' . $path . " (Regex returned 0 for pattern '$pattern' with route $path)");
+            }
+
+            // compile pattern
+            if (FALSE === preg_match('/'.$pattern.'/', $path, $matches)) {
+                throw new ResourceNotFoundException('Route not found: ' . $path . " (Regex compiler error)");
+            }
 
             // current route can be translated to regex pattern
             if (count($matches) >= 2 && !empty($matches[1])) {
-                if ($route['method'] != $req->method())
+                if ($route->method != $req->method())
                     throw new MethodNotAllowedException("Method " . $req->method() . " not allowed.");
 
                 array_shift($matches); // remove first element
@@ -75,9 +74,9 @@ class Kernel {
             throw new ResourceNotFoundException('Route not found: ' . $path);
 
         // if we use a closure, call them with the request object
-        if ($current_route['closure']) {
+        if ($current_route->closure) {
         	$content = null;
-            $ref = new \ReflectionFunction ($current_route['closure']);
+            $ref = new \ReflectionFunction ($current_route->closure);
             if ($ref->getNumberOfParameters() > 0) {
                 $params = array();
                 $first = $ref->getParameters()[0];
@@ -88,10 +87,10 @@ class Kernel {
                     $params[] = $match;
                 }
 
-                $content = call_user_func_array($current_route['closure'], $params);
+                $content = call_user_func_array($current_route->closure, $params);
             }
             else {
-                $content = $current_route['closure'] ();
+                $content = $current_route->closure();
             }
             
 	        $clean_content = ob_get_clean ();
@@ -106,10 +105,11 @@ class Kernel {
         }
 
         // we use a controller, so do checks and throw if something is wrong (class or method)
-        if (empty($current_route['controller']))
-            throw new IllegalArgumentException('No closure or controller was set for route ' . $current_route['path']);
+        if (!$current_route->controller) {
+            throw new IllegalArgumentException('No controller was set for route ' . $current_route->path);
+        }
 
-        $parts = explode("@", $current_route['controller']);
+        $parts = explode("@", $current_route->controller);
         $controller = "App\\Controllers\\" . $parts[0];
         $method = $parts[1];
 

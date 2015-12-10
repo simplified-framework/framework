@@ -1,12 +1,19 @@
 <?php
 
 namespace Simplified\Http;
-use Simplified\Core\Collection;
 use Simplified\Core\IllegalArgumentException;
 
 class Route {
-    private static $routes;
-    private static $instance;
+    private $conditions;
+    private $name;
+    private $path;
+    private $method;
+    private $controller;
+    private $closure;
+
+    public function __get($key) {
+        return $this->$key;
+    }
 
     public static function get($uri, $arg2) {
         return self::registerRoute('get', $uri, $arg2);
@@ -25,33 +32,17 @@ class Route {
     }
 
     public function conditions(array $condition) {
-        $keys = array_keys(self::$routes->toArray());
-        $route = self::$routes[end($keys)];
-        $route['conditions'] = $condition;
-
-        self::$routes[end($keys)] = $route;
+        $this->conditions = $condition;
     }
 
     public static function getCollection() {
-        if (self::$instance == null)
-            self::$instance = new self();
-
-        if (self::$routes == null)
-            self::$routes = new Collection();
-
-        return self::$routes;
+        RouteCollection::instance();
     }
 
     private static function registerRoute($type, $uri, $arg2) {
-        if (self::$instance == null)
-            self::$instance = new self();
-
-        if (self::$routes == null)
-            self::$routes = new Collection();
-
         $controller = null;
         $closure = null;
-        $routename = md5(microtime());
+        $name = md5(microtime());
 
         if (is_array($arg2)) {
             if (isset($arg2['uses'])) {
@@ -59,7 +50,7 @@ class Route {
             }
 
             if (isset($arg2['as'])) {
-                $routename = $arg2['as'];
+                $name = $arg2['as'];
             }
         }
         else
@@ -77,20 +68,17 @@ class Route {
         if (!strstr($controller, "@") && !$arg2 instanceof \Closure)
             throw new IllegalArgumentException("Unable to set controller for route $uri: no controller method set.");
 
-        $route = array(
-            'conditions' => array(),
-            'name' => $routename,
-            'path' => $uri,
-            'method' => strtoupper($type),
-            'controller' => $controller,
-            'closure' => $closure
-        );
-        self::$routes->add($routename, $route);
+        $instance = new self();
+        $instance->conditions = array();
+        $instance->name = $name;
+        $instance->path = $uri;
+        $instance->method = strtoupper($type);
+        $instance->controller = $controller;
+        $instance->closure = $closure;
 
-        return self::$instance;
-    }
+        $collection = RouteCollection::instance();
+        $collection->add($name, $instance);
 
-    private function __construct() {
-        self::$routes = new Collection();
+        return $instance;
     }
 }
