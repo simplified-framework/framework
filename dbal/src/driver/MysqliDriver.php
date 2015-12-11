@@ -3,9 +3,9 @@
 namespace Simplified\DBAL\Driver;
 use Simplified\DBAL\ConnectionException;
 use Simplified\DBAL\ModelException;
-use Simplified\DBAL\NullPointerException;
 use Simplified\DBAL\DriverException;
 use Simplified\Core\Collection;
+use Simplified\Core\NullPointerException;
 
 class MySqliDriver implements Driver {
     private $_conn;
