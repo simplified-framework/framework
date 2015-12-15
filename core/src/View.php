@@ -25,6 +25,6 @@ class View {
     }
 
     public function render($template, $data = array()) {
-        $this->renderer->render($template, $data);
+        return $this->renderer->render($template, $data);
     }
 }
