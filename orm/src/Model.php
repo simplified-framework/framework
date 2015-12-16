@@ -1,7 +1,7 @@
 <?php
 
 namespace Simplified\Orm;
-use Simplified\Config\PHPFileLoader;
+use Simplified\Config\Config;
 use Simplified\DBAL\DriverException;
 use Simplified\DBAL\ModelException;
 use Simplified\DBAL\ConnectionException;
@@ -29,9 +29,8 @@ class Model {
     private function init() {
         $ref = new ReflectionProperty(get_called_class(), 'connection');
 		$connection = $ref->getValue($this);
-		
-		$loader = new PHPFileLoader();
-		$params = $loader->load(CONFIG_DIR . 'database.php', array());
+
+		$params = Config::getAll('database');
 		
 		if (empty($params) || count($params) == 0) {
 			throw new ConnectionException('No connections found');

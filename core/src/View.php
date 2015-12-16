@@ -2,20 +2,19 @@
 
 namespace Simplified\Core;
 
-use Simplified\Config\PHPFileLoader;
+use Simplified\Config\Config;
 
 class View {
     private $renderer;
 
     public function __construct() {
-        $loader = new PHPFileLoader();
-        $providers = $loader->load(CONFIG_PATH . 'providers.php', array());
-        if (is_array($providers) && isset($providers['view'])) {
+        $provider = Config::get('providers', 'view', null);
+        if ($provider) {
             // use reflection to detect the provider class name
-            $refMethod = new \ReflectionMethod($providers['view'], 'provides');
-            $rendererClass  = $refMethod->invoke(new $providers['view']);
+            $refMethod = new \ReflectionMethod($provider, 'provides');
+            $rendererClass  = $refMethod->invoke(new $provider);
             if (empty($rendererClass))
-                throw new ViewException("Class {$providers['view']} doesn't provides a valid renderer class");
+                throw new ViewException("Class {$provider} doesn't provides a valid renderer class");
             $this->renderer = new $rendererClass;
         } else {
             $refMethod = new \ReflectionMethod(__NAMESPACE__ . '\\ViewProvider', 'provides');
