@@ -3,6 +3,7 @@
 namespace Simplified\Http;
 
 use Simplified\Core\NullPointerException;
+use DateTime;
 
 class Response {
     private $headers;
@@ -10,6 +11,7 @@ class Response {
     private $content = null;
     private $date = null;
     private $lastModified = null;
+    private $protocolVersion = "HTTP/1.1";
 
     private $statusHeaders = [
 
@@ -42,57 +44,58 @@ class Response {
         308 => "Permanent Redirect",
 
         // Client errors
-        400 => "",
-        401 => "",
-        402 => "",
-        403 => "",
-        404 => "",
-        405 => "",
-        406 => "",
-        407 => "",
-        408 => "",
-        409 => "",
-        410 => "",
-        411 => "",
-        412 => "",
-        413 => "",
-        414 => "",
-        415 => "",
-        416 => "",
-        417 => "",
-        418 => "",
-        420 => "",
-        421 => "",
-        422 => "",
-        423 => "",
-        424 => "",
-        425 => "",
-        426 => "",
-        428 => "",
-        429 => "",
-        431 => "",
-        444 => "",
-        449 => "",
-        451 => "",
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        402 => "Payment Required",
+        403 => "Forbidden",
+        404 => "Not Found",
+        405 => "Method Not Allowed",
+        406 => "Not Acceptable",
+        407 => "Proxy Authentication Required",
+        408 => "Request Time-out",
+        409 => "Conflict",
+        410 => "Gone",
+        411 => "Length Required",
+        412 => "Precondition Failed",
+        413 => "Request Entity Too Large",
+        414 => "Request-URL Too Long",
+        415 => "Unsupported Media Type",
+        416 => "Requested range not satisfiable",
+        417 => "Expectation Failed",
+        418 => "I'm a teapot",
+        420 => "Policy Not Fulfilled",
+        421 => "Misdirected Request",
+        422 => "Unprocessable Entity",
+        423 => "Locked",
+        424 => "Failed Dependency",
+        425 => "Unordered Collection",
+        426 => "Upgrade Required",
+        428 => "Precondition Required",
+        429 => "Too Many Requests",
+        431 => "Request Header Fields Too Large",
+        444 => "No Response",
+        449 => "The request should be retried after doing the appropriate action",
+        451 => "Unavailable For Legal Reasons",
 
         // Server errors
-        500 => "",
-        501 => "",
-        502 => "",
-        503 => "",
-        504 => "",
-        505 => "",
-        506 => "",
-        507 => "",
-        508 => "",
-        509 => "",
-        510 => ""
+        500 => "Internal Server Error",
+        501 => "Not Implemented",
+        502 => "Bad Gateway",
+        503 => "Service Unavailable",
+        504 => "Gateway Time-out",
+        505 => "HTTP Version not supported",
+        506 => "Variant Also Negotiates",
+        507 => "Insufficient Storage",
+        508 => "Loop Detected",
+        509 => "Bandwidth Limit Exceeded",
+        510 => "Not Extended"
     ];
 
     public function __construct($content = '', $status = 200, $headers = array()) {
         $this->setContent($content);
         $this->setStatus($status);
         $this->addHeader("Content-Type", "text/html");
+        $this->setLastModified(new DateTime());
     }
 
     public function addHeader($name, $value) {
@@ -106,34 +109,39 @@ class Response {
     }
 
     public function setStatus($status) {
-        $this->status = $status;
+        $this->status = intval($status);
     }
 
     public function setContent($content) {
         $this->content = $content;
     }
 
-    public function setDate(\DateTime $date) {
+    public function setDate(DateTime $date) {
         $this->date = $date;
     }
 
-    public function setLastModified(\DateTime $date) {
+    public function setLastModified(DateTime $date) {
         $this->lastModified = $date;
+    }
+
+    public function setProtocolVersion($version) {
+        if ($version != "HTTP/1.0" && $version != "HTTP/1.1")
+            throw new UnknownProtocolVersion("Unknown version: $version");
+
+        $this->protocolVersion = $version;
     }
 
     public function sendHeaders() {
         $status = $this->status . " " . $this->statusHeaders[$this->status];
-        //print $status; exit;
-
-        header("HTTP/1.1 " . $status, true);
+        header($this->protocolVersion . " " . $status, true);
+        header('Last-Modified: ' . $this->lastModified);
         foreach ($this->headers as $name => $value) {
             header($name.": ".$value, true);
         }
     }
 
     public function sendContent() {
-        if (strlen($this->content) > 0)
-            print $this->content;
+        print $this->content;
     }
 
     public function send() {
