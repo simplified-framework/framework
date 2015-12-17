@@ -134,7 +134,7 @@ class Response {
     public function sendHeaders() {
         $status = $this->status . " " . $this->statusHeaders[$this->status];
         header($this->protocolVersion . " " . $status, true);
-        header('Last-Modified: ' . $this->lastModified);
+        header('Last-Modified: ' . $this->lastModified->format(DATE_COOKIE));
         foreach ($this->headers as $name => $value) {
             header($name.": ".$value, true);
         }
