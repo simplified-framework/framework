@@ -6,13 +6,92 @@ use Simplified\Core\NullPointerException;
 
 class Response {
     private $headers;
-    private $status = "HTTP/1.1 401 Authorization Failed";
+    private $status = 0;
     private $content = null;
     private $date = null;
     private $lastModified = null;
 
-    public function __construct() {
-        $this->setStatus("HTTP/1.1 200 Ok");
+    private $statusHeaders = [
+
+        // Information
+        100 => "Continue",
+        101 => "Switching Protocols",
+        102 => "Processing",
+
+        // Success operations
+        200 => "OK",
+        201 => "Created",
+        202 => "Accepted",
+        203 => "Non-Authoritative Information",
+        204 => "No Content",
+        205 => "Reset Content",
+        206 => "Partial Content",
+        207 => "Multi-Status",
+        208 => "Already Reported",
+        226 => "IM Used",
+
+        // Redirection
+        300 => "Multiple Choices",
+        301 => "Moved Permanently",
+        302 => "Found",
+        303 => "See Other",
+        304 => "Not Modified",
+        305 => "Use Proxy",
+        306 => "Switch Proxy", // not used
+        307 => "Temporary Redirect",
+        308 => "Permanent Redirect",
+
+        // Client errors
+        400 => "",
+        401 => "",
+        402 => "",
+        403 => "",
+        404 => "",
+        405 => "",
+        406 => "",
+        407 => "",
+        408 => "",
+        409 => "",
+        410 => "",
+        411 => "",
+        412 => "",
+        413 => "",
+        414 => "",
+        415 => "",
+        416 => "",
+        417 => "",
+        418 => "",
+        420 => "",
+        421 => "",
+        422 => "",
+        423 => "",
+        424 => "",
+        425 => "",
+        426 => "",
+        428 => "",
+        429 => "",
+        431 => "",
+        444 => "",
+        449 => "",
+        451 => "",
+
+        // Server errors
+        500 => "",
+        501 => "",
+        502 => "",
+        503 => "",
+        504 => "",
+        505 => "",
+        506 => "",
+        507 => "",
+        508 => "",
+        509 => "",
+        510 => ""
+    ];
+
+    public function __construct($content = '', $status = 200, $headers = array()) {
+        $this->setContent($content);
+        $this->setStatus($status);
         $this->addHeader("Content-Type", "text/html");
     }
 
@@ -43,7 +122,10 @@ class Response {
     }
 
     public function sendHeaders() {
-        header($this->status, true);
+        $status = $this->status . " " . $this->statusHeaders[$this->status];
+        //print $status; exit;
+
+        header("HTTP/1.1 " . $status, true);
         foreach ($this->headers as $name => $value) {
             header($name.": ".$value, true);
         }
