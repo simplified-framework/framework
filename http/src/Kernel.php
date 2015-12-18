@@ -1,5 +1,9 @@
 <?php
 
+namespace Simplified\Http;
+use Simplified\Core\IllegalArgumentException;
+use Simplified\Debug\Debug;
+
 define ("BASE_PATH",   dirname(dirname($_SERVER['SCRIPT_FILENAME'])) . DIRECTORY_SEPARATOR);
 define ("VENDOR_PATH", BASE_PATH . "vendor" . DIRECTORY_SEPARATOR);
 define ("PUBLIC_PATH", BASE_PATH . "public" . DIRECTORY_SEPARATOR);
@@ -9,11 +13,6 @@ define ("I18N_PATH", APP_PATH . "i18n" . DIRECTORY_SEPARATOR);
 define ("RESOURCES_PATH", APP_PATH . "resources" . DIRECTORY_SEPARATOR);
 define ("RESOURCES_VENDOR_PATH", RESOURCES_PATH . "vendor" . DIRECTORY_SEPARATOR);
 define ("CONFIG_PATH", APP_PATH . "config" . DIRECTORY_SEPARATOR);
-
-namespace Simplified\Http;
-
-use Simplified\Core\IllegalArgumentException;
-use Simplified\Debug\Debug;
 
 // TODO dont simply cho return values, instead check response type
 
