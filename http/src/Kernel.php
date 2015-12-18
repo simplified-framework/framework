@@ -122,12 +122,18 @@ class Kernel {
             
 	        $clean_content = ob_get_clean ();
 	        if ($clean_content != null) {
-                // TODO create Response object
-	        	print $clean_content;
+                (new Response($clean_content))->send();
 	        }
 	        if ($retval != null) {
-                // TODO check for type string, array or Response object
-	        	print $retval;
+                if (is_string($retval)) {
+                    (new Response($retval))->send();
+                }
+                else
+                if ($retval instanceof Response) {
+                    $retval->send();
+                } else {
+                    // TODO check for serializable type
+                }
 	        }
 
             return;
@@ -170,12 +176,19 @@ class Kernel {
         
         $clean_content = ob_get_clean ();
         if ($clean_content != null) {
-            // TODO create Response object
-        	print $clean_content;
+            (new Response($clean_content))->send();
         }
+
         if ($retval != null) {
-            // TODO check for type string, array or Response object
-        	print $retval;
+            if (is_string($retval)) {
+                (new Response($retval))->send();
+            }
+            else
+                if ($retval instanceof Response) {
+                    $retval->send();
+                } else {
+                    // TODO check for serializable type
+                }
         }
     }
 }
