@@ -1,6 +1,7 @@
 <?php
 
 namespace Simplified\Http;
+use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Debug\Debug;
 
@@ -25,6 +26,14 @@ require CONFIG_PATH . 'routes.php';
 class Kernel {
     public function handleRequest() {
     	ob_start ();
+
+        $provider = Config::get('providers', 'session');
+        if ($provider) {
+            if (!class_exists($provider))
+                throw new IllegalArgumentException('Unable to set session handler to ' . $config);
+
+            $provider = new $provider();
+        }
 
         // load declared routes
         $routes = RouteCollection::instance()->toArray();
