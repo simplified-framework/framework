@@ -4,6 +4,7 @@ namespace Simplified\Http;
 use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Debug\Debug;
+use Simplified\Session\SessionException;
 
 define ("BASE_PATH",   dirname(dirname($_SERVER['SCRIPT_FILENAME'])) . DIRECTORY_SEPARATOR);
 define ("VENDOR_PATH", BASE_PATH . "vendor" . DIRECTORY_SEPARATOR);
@@ -27,6 +28,8 @@ class Kernel {
     public function handleRequest() {
     	ob_start ();
 
+        if (headers_sent())
+            throw new SessionException('Unable to start session handling, headers already sent.');
         $provider = Config::get('providers', 'session');
         if ($provider) {
             if (!class_exists($provider))
@@ -36,6 +39,7 @@ class Kernel {
             $handler = new $handlerClass();
             session_set_save_handler($handler, true);
         }
+        session_start();
 
         // load declared routes
         $routes = RouteCollection::instance()->toArray();
