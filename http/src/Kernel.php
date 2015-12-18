@@ -30,9 +30,9 @@ class Kernel {
         $provider = Config::get('providers', 'session');
         if ($provider) {
             if (!class_exists($provider))
-                throw new IllegalArgumentException('Unable to set session handler to ' . $provider);
+                throw new IllegalArgumentException('Unable to set session provider to ' . $provider);
 
-            $provider = new $provider();
+            $handler = new (new $provider())->provides();
         }
 
         // load declared routes
