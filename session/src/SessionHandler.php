@@ -30,6 +30,13 @@ class SessionHandler implements \SessionHandlerInterface {
     }
 
     public function write($session_id, $data) {
+        $this->sessionpath = session_save_path();
+        session_save_path($this->sessionpath);
+
+        if (!file_exists($this->sessionpath)) {
+            mkdir($this->sessionpath, 0775, true);
+        }
+
         $file = $this->sessionpath . DIRECTORY_SEPARATOR . $session_id;
         $fp = fopen($file, "w");
         fwrite($fp, $data);
