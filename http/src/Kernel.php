@@ -30,12 +30,8 @@ class Kernel {
 
         if (headers_sent())
             throw new SessionException('Unable to start session handling, headers already sent.');
+
         $provider = Config::get('providers', 'session');
-
-        // set session save path to app/storage/session
-        // TODO load it from session config
-        session_save_path(STORAGE_PATH . "session");
-
         if ($provider) {
             if (!class_exists($provider))
                 throw new IllegalArgumentException('Unable to set session provider to ' . $provider);

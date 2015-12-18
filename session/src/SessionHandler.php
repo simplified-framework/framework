@@ -12,7 +12,11 @@ namespace Simplified\Session;
 class SessionHandler implements \SessionHandlerInterface {
     private $sessionpath;
     public function __construct() {
-        $this->sessionpath = session_save_path();
+        // set session save path to app/storage/session
+        // TODO load it from session config
+        $this->sessionpath = STORAGE_PATH . "session";
+        session_save_path($this->sessionpath);
+
         if (!file_exists($this->sessionpath)) {
             mkdir($this->sessionpath, 0775, true);
         }
@@ -35,7 +39,7 @@ class SessionHandler implements \SessionHandlerInterface {
     }
 
     public function open($session_path, $session_id) {
-        return true;
+        return is_writable($session_path);
     }
 
     public function close() {
@@ -43,6 +47,7 @@ class SessionHandler implements \SessionHandlerInterface {
     }
 
     public function gc($max_life_time) {
+        // TODO implement garbage cleanup
         return true;
     }
 
