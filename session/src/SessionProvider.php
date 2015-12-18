@@ -13,7 +13,7 @@ use Simplified\Core\Provider;
 
 class SessionProvider implements Provider{
     public function provides() {
-        return '\\Simplified\\Session\\SessionHandler';
+        return '\\Simplified\\Session\\EncryptedSessionHandler';
     }
 
     public function boot() {}
