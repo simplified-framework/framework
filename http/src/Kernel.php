@@ -5,6 +5,8 @@ namespace Simplified\Http;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Debug\Debug;
 
+// TODO dont simply cho return values, instead check response type
+
 // handle debug
 Debug::handleDebug();
 
@@ -87,18 +89,20 @@ class Kernel {
                     $params[] = $match;
                 }
 
-                $content = call_user_func_array($current_route->closure, $params);
+                $retval = call_user_func_array($current_route->closure, $params);
             }
             else {
-                $content = $current_route->closure();
+                $retval = $current_route->closure();
             }
             
 	        $clean_content = ob_get_clean ();
 	        if ($clean_content != null) {
+                // TODO create Response object
 	        	print $clean_content;
 	        }
-	        if ($content != null) {
-	        	print $content;
+	        if ($retval != null) {
+                // TODO check for type string, array or Response object
+	        	print $retval;
 	        }
 
             return;
@@ -121,7 +125,7 @@ class Kernel {
 
         $ref = new \ReflectionClass ($controller);
         $num_params = $ref->getMethod($method)->getNumberOfParameters();
-        $content = null;
+        $retval = null;
         
         if ($num_params > 0) {
             $ref_method = $ref->getMethod($method);
@@ -133,18 +137,20 @@ class Kernel {
                 $params[] = $match;
             }
 
-            $content = call_user_func_array(array(new $controller, $method), $params);
+            $retval = call_user_func_array(array(new $controller, $method), $params);
         }
         else {
-            $content = call_user_func(array(new $controller, $method));
+            $retval = call_user_func(array(new $controller, $method));
         }
         
         $clean_content = ob_get_clean ();
         if ($clean_content != null) {
+            // TODO create Response object
         	print $clean_content;
         }
-        if ($content != null) {
-        	print $content;
+        if ($retval != null) {
+            // TODO check for type string, array or Response object
+        	print $retval;
         }
     }
 }

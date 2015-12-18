@@ -2,6 +2,8 @@
 
 namespace Simplified\Debug;
 
+use Simplified\Http\Response;
+
 class ErrorHandler {
     private static $errorSet = false;
     private static $css = '
@@ -99,8 +101,6 @@ class ErrorHandler {
 
         $stacktrace = implode('<br>', $stacktrace);
 
-        
-        
         $html = '
 		<html>
 		<head><title>Exception</title>'.self::compressCss().'</head>
@@ -297,7 +297,7 @@ class ErrorHandler {
         } else {
         	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
         	// TODO check for debug. If not, send error page
-            print $html;
+            (new Response($html, 500))->send();
         }
     }
     

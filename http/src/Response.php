@@ -147,5 +147,6 @@ class Response {
     public function send() {
         $this->sendHeaders();
         $this->sendContent();
+        exit;
     }
 }

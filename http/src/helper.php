@@ -22,7 +22,3 @@ function route($name) {
 
 	throw new ResourceNotFoundException("No route named $name found. " . $routes->count());
 }
-
-function redirect() {
-
-}
