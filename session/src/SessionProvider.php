@@ -9,6 +9,12 @@
 namespace Simplified\Session;
 
 
-class SessionProvider {
+use Simplified\Core\Provider;
 
+class SessionProvider implements Provider{
+    public function provides() {
+        return '\\Simplified\\Session\\SessionHandler';
+    }
+
+    public function boot() {}
 }
