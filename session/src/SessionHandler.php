@@ -30,7 +30,7 @@ class SessionHandler implements \SessionHandlerInterface {
     }
 
     public function write($session_id, $data) {
-        $this->sessionpath = session_save_path();
+        $this->sessionpath = STORAGE_PATH . "session";
         session_save_path($this->sessionpath);
 
         if (!file_exists($this->sessionpath)) {
