@@ -13,6 +13,9 @@ class SessionHandler implements \SessionHandlerInterface {
     private $sessionpath;
     public function __construct() {
         $this->sessionpath = session_save_path();
+        if (!file_exists($this->sessionpath)) {
+            mkdir($this->sessionpath, 0775, true);
+        }
     }
 
     public function read($session_id) {
