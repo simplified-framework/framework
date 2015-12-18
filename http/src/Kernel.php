@@ -30,7 +30,7 @@ class Kernel {
         $provider = Config::get('providers', 'session');
         if ($provider) {
             if (!class_exists($provider))
-                throw new IllegalArgumentException('Unable to set session handler to ' . $config);
+                throw new IllegalArgumentException('Unable to set session handler to ' . $provider);
 
             $provider = new $provider();
         }
