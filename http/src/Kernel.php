@@ -32,7 +32,9 @@ class Kernel {
             if (!class_exists($provider))
                 throw new IllegalArgumentException('Unable to set session provider to ' . $provider);
 
-            $handler = new (new $provider())->provides();
+            $handlerClass = (new $provider())->provides();
+            $handler = new $handlerClass();
+            session_set_save_handler($handler, true);
         }
 
         // load declared routes
