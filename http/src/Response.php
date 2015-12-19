@@ -94,8 +94,9 @@ class Response {
     public function __construct($content = '', $status = 200, $headers = array()) {
         $this->setContent($content);
         $this->setStatus($status);
-        $this->addHeader("Content-Type", "text/html");
         $this->setLastModified(new DateTime());
+        $this->addHeader("Content-Type", "text/html");
+        $this->headers = array_merge($this->headers, $headers);
     }
 
     public function addHeader($name, $value) {
