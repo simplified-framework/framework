@@ -131,8 +131,10 @@ class Kernel {
                 else
                 if ($retval instanceof Response) {
                     $retval->send();
-                } else {
-                    // TODO check for serializable type
+                }
+                else
+                if (is_array($retval)){
+                    (new Response(json_encode($retval)))->send();
                 }
 	        }
 
@@ -184,11 +186,13 @@ class Kernel {
                 (new Response($retval))->send();
             }
             else
-                if ($retval instanceof Response) {
-                    $retval->send();
-                } else {
-                    // TODO check for serializable type
-                }
+            if ($retval instanceof Response) {
+                $retval->send();
+            }
+            else
+            if (is_array($retval)){
+                (new Response(json_encode($retval)))->send();
+            }
         }
     }
 }
