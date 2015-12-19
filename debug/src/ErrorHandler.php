@@ -3,8 +3,11 @@
 namespace Simplified\Debug;
 
 use Simplified\Http\Response;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class ErrorHandler {
+    private static $logger;
     private static $errorSet = false;
     private static $css = '
         <style type="text/css">
@@ -78,9 +81,16 @@ class ErrorHandler {
         if( self::$errorSet )
             return;
 
-        $stack = debug_backtrace();
         $stacktrace = array();
         $trace = $e->getTrace();
+
+        if (self::$logger == null) {
+            self::$logger = new Logger('errors');
+            self::$logger->pushHandler(
+                new StreamHandler(STORAGE_PATH . 'log' . DIRECTORY_SEPARATOR . 'error.log', Logger::WARNING)
+            );
+        }
+        self::$logger->addError($e->getMessage());
 
         foreach($trace as $t) {
             $line = '';
@@ -124,11 +134,16 @@ class ErrorHandler {
     public static function handleError($errno, $errstr, $errfile, $errline) {
 
         self::$errorSet = true;
-        $exit = true;
-
-        $stack = debug_backtrace();
         $stacktrace = array();
         $trace = debug_backtrace();
+
+        if (self::$logger == null) {
+            self::$logger = new Logger('errors');
+            self::$logger->pushHandler(
+                new StreamHandler(STORAGE_PATH . 'log' . DIRECTORY_SEPARATOR . 'error.log', Logger::WARNING)
+            );
+        }
+        self::$logger->addError($errstr);
 
         foreach($trace as $t) {
             $line = '';
@@ -187,12 +202,17 @@ class ErrorHandler {
 
         if( $isError ) {
             self::$errorSet = true;
-            $exit = false;
-
-            $stack = debug_backtrace();
             $stacktrace = array();
             $trace = debug_backtrace();
             $trace = array_reverse($trace);
+
+            if (self::$logger == null) {
+                self::$logger = new Logger('errors');
+                self::$logger->pushHandler(
+                    new StreamHandler(STORAGE_PATH . 'log' . DIRECTORY_SEPARATOR . 'error.log', Logger::WARNING)
+                );
+            }
+            self::$logger->addError($error['message']);
 
             foreach($trace as $t) {
                 $line = '';

@@ -127,7 +127,7 @@ class Response {
 
     public function setProtocolVersion($version) {
         if ($version != "HTTP/1.0" && $version != "HTTP/1.1")
-            throw new UnknownProtocolVersion("Unknown version: $version");
+            throw new UnknownProtocolVersionException("Unknown version: $version");
 
         $this->protocolVersion = $version;
     }
