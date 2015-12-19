@@ -24,8 +24,38 @@ class Logger extends AbstractLogger {
                 return;
             }
 
+            switch ($level) {
+                case LogLevel::ERROR:
+                    $prefix = "[ERROR]";
+                    break;
+                case LogLevel::ALERT:
+                    $prefix = "[ALERT]";
+                    break;
+                case LogLevel::CRITICAL:
+                    $prefix = "[CRITICAL]";
+                    break;
+                case LogLevel::DEBUG:
+                    $prefix = "[DEBUG]";
+                    break;
+                case LogLevel::EMERGENCY:
+                    $prefix = "[EMERG]";
+                    break;
+                case LogLevel::INFO:
+                    $prefix = "[INFO]";
+                    break;
+                case LogLevel::NOTICE:
+                    $prefix = "[NOTICE]";
+                    break;
+                case LogLevel::WARNING:
+                    $prefix = "[WARN]";
+                    break;
+                default:
+                    $prefix = "[UNNOWN]";
+                    break;
+            }
             if (($fp = fopen($file, "a"))) {
                 $line = (new \DateTime())->format('Y-m-d H:i:s');
+                $line .= " " . $prefix;
                 $line .= " " . trim($message) . PHP_EOL;
                 fwrite($fp, $line);
                 fclose($fp);

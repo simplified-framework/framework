@@ -2,6 +2,7 @@
 
 namespace Simplified\Debug;
 
+use Simplified\Http\Request;
 use Simplified\Http\Response;
 use Simplified\Log\Logger;
 
@@ -86,7 +87,8 @@ class ErrorHandler {
         if (self::$logger == null)
             self::$logger = new Logger();
 
-        self::$logger->error($e->getMessage());
+        $logmessage = $e->getFile() . " at line " . $e->getLine() . ": " . $e->getMessage();
+        self::$logger->error($logmessage);
 
         foreach($trace as $t) {
             $line = '';
@@ -136,7 +138,8 @@ class ErrorHandler {
         if (self::$logger == null) {
             self::$logger = new Logger();
         }
-        self::$logger->error($errstr);
+        $logmessage = $errfile . " at line " . $errline . ": " . $errstr;
+        self::$logger->error($logmessage);
 
         foreach($trace as $t) {
             $line = '';
@@ -202,7 +205,8 @@ class ErrorHandler {
             if (self::$logger == null) {
                 self::$logger = new Logger();
             }
-            self::$logger->error($error['message']);
+            $logmessage = $error['file'] . " at line " . $error['line'] . ": " . $error['message'];
+            self::$logger->error($logmessage);
 
             foreach($trace as $t) {
                 $line = '';
@@ -295,26 +299,21 @@ class ErrorHandler {
     }
 
     private static function output($html, $message) {
-        $isAjax = false;
+        $req = Request::createFromGlobals();
 
-        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            $isAjax = true;
-        }
-
-        if( $isAjax ) {
-            header("Content-type: application/json");
-            print json_encode(array('error' => true, 'message' => 'Internal Server Error<br>'.$message));
+        if( $req->isAjax() ) {
+            $json = json_encode(array('error' => true, 'message' => 'Internal Server Error<br>'.$message));
+            (new Response($json, 500, array('Content-Type' => 'application/json')))->send();
         } else {
-        	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-        	// TODO check for debug. If not, send error page
+            // TODO check for debug. If not, send error page
             (new Response($html, 500))->send();
         }
     }
-    
+
     private static function compressCss() {
-    	$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', self::$css);
-    	$buffer = str_replace(': ', ':', $buffer);
-    	$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
-    	return $buffer;
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', self::$css);
+        $buffer = str_replace(': ', ':', $buffer);
+        $buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+        return $buffer;
     }
 }
