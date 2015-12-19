@@ -8,17 +8,18 @@
         }
     ],
     "require": {
-      "monolog/monolog":"1.0.x"
+      "psr/log":"1.0.x"
     },
     "autoload": {
-        "psr-4": {
-		"Simplified\\Config\\":"config/src/",
-		"Simplified\\Debug\\":"debug/src/",
-		"Simplified\\Core\\":"core/src/",
-		"Simplified\\DBAL\\":"dbal/src/",
-		"Simplified\\Http\\":"http/src/",
-		"Simplified\\Orm\\":"orm/src/",
-          "Simplified\\Session\\":"session/src/"
+          "psr-4": {
+		  "Simplified\\Config\\":"config/src/",
+		  "Simplified\\Debug\\":"debug/src/",
+		  "Simplified\\Core\\":"core/src/",
+		  "Simplified\\DBAL\\":"dbal/src/",
+		  "Simplified\\Http\\":"http/src/",
+		  "Simplified\\Orm\\":"orm/src/",
+          "Simplified\\Session\\":"session/src/",
+          "Simplified\\Log\\":"log/src"
         },
 		"files": [
 			"http/src/helper.php"

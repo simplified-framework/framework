@@ -3,8 +3,7 @@
 namespace Simplified\Debug;
 
 use Simplified\Http\Response;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+use Simplified\Log\Logger;
 
 class ErrorHandler {
     private static $logger;
@@ -84,13 +83,10 @@ class ErrorHandler {
         $stacktrace = array();
         $trace = $e->getTrace();
 
-        if (self::$logger == null) {
-            self::$logger = new Logger('errors');
-            self::$logger->pushHandler(
-                new StreamHandler(STORAGE_PATH . 'log' . DIRECTORY_SEPARATOR . 'error.log', Logger::WARNING)
-            );
-        }
-        self::$logger->addError($e->getMessage());
+        if (self::$logger == null)
+            self::$logger = new Logger();
+
+        self::$logger->error($e->getMessage());
 
         foreach($trace as $t) {
             $line = '';
@@ -138,12 +134,9 @@ class ErrorHandler {
         $trace = debug_backtrace();
 
         if (self::$logger == null) {
-            self::$logger = new Logger('errors');
-            self::$logger->pushHandler(
-                new StreamHandler(STORAGE_PATH . 'log' . DIRECTORY_SEPARATOR . 'error.log', Logger::WARNING)
-            );
+            self::$logger = new Logger();
         }
-        self::$logger->addError($errstr);
+        self::$logger->error($errstr);
 
         foreach($trace as $t) {
             $line = '';
@@ -207,12 +200,9 @@ class ErrorHandler {
             $trace = array_reverse($trace);
 
             if (self::$logger == null) {
-                self::$logger = new Logger('errors');
-                self::$logger->pushHandler(
-                    new StreamHandler(STORAGE_PATH . 'log' . DIRECTORY_SEPARATOR . 'error.log', Logger::WARNING)
-                );
+                self::$logger = new Logger();
             }
-            self::$logger->addError($error['message']);
+            self::$logger->error($error['message']);
 
             foreach($trace as $t) {
                 $line = '';
