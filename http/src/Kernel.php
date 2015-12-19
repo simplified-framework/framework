@@ -134,7 +134,7 @@ class Kernel {
                 }
                 else
                 if (is_array($retval)){
-                    (new Response(json_encode($retval)))->send();
+                    (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
                 }
 	        }
 
@@ -191,7 +191,7 @@ class Kernel {
             }
             else
             if (is_array($retval)){
-                (new Response(json_encode($retval)))->send();
+                (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
             }
         }
     }
