@@ -13,11 +13,13 @@ use Psr\Log\LogLevel;
 class Logger extends AbstractLogger {
     private static $logdir;
 
-    public function log($level, $message, $context = array()) {
+    public function log($level, $message, array $context = array()) {
         if ($this->ensureLogDir()) {
             $fp = fopen(self::$logdir . DIRECTORY_SEPARATOR . $level . ".txt", "a");
             if ($fp) {
-                fwrite($fp, $message);
+                $line = (new \DateTime())->format('Y-m-d H:i:s');
+                $line .= " " . trim($message) . "\n";
+                fwrite($fp, $line);
                 fclose($fp);
             }
         }
