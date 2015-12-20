@@ -37,7 +37,7 @@ class Connection implements ConnectionInterface {
     }
 
     public function isConnected() {
-        return $this->_conn == null || $this->_conn->connect_error ? false : true;
+        return $this->_conn == null ? false : true;
     }
     
     public function getHost() {
