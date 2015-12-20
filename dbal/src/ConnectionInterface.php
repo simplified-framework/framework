@@ -1,6 +1,6 @@
 <?php
 
-namespace Simplified\DBAL\Driver;
+namespace Simplified\DBAL;
 
 interface ConnectionInterface {
     // connection data

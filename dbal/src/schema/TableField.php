@@ -6,10 +6,10 @@
  * Time: 15:09
  */
 
-namespace Simplified\DBAL\Driver;
+namespace Simplified\DBAL\Schema;
 
 
-class Table {
+class TableField {
     private $attributes = array();
 
     public function __set($name, $value) {
@@ -17,6 +17,7 @@ class Table {
     }
 
     public function __get($name) {
-        return isset($this->attributes[strtolower($name)]) ? $this->attributes[strtolower($name)] : null;
+        return isset($this->attributes[strtolower($name)]) ?
+            $this->attributes[strtolower($name)] : null;
     }
 }

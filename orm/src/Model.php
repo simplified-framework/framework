@@ -1,9 +1,9 @@
 <?php
 
 namespace Simplified\Orm;
+
 use Simplified\Config\Config;
-use Simplified\DBAL\Driver\Connection;
-use Simplified\DBAL\DriverException;
+use Simplified\DBAL\Connection;
 use Simplified\DBAL\ConnectionException;
 use ReflectionProperty;
 

@@ -1,10 +1,9 @@
 <?php
 
-namespace Simplified\DBAL\Driver;
+namespace Simplified\DBAL;
 use Simplified\Core\Collection;
+use Simplified\Core\IllegalArgumentException;
 use Simplified\Core\NullPointerException;
-use Simplified\DBAL\ConnectionException;
-use Simplified\DBAL\DriverException;
 
 class Connection implements ConnectionInterface {
     private $_conn;
@@ -67,24 +66,36 @@ class Connection implements ConnectionInterface {
     }
 
     public function select($query, array $bindings = array()) {
+        if (stristr($query, "select ") !== 0)
+            throw new IllegalArgumentException("Query isnt a valid select statement (" . $query . ")");
+
         if ($this->isConnected()) {
 
         }
     }
 
     public function insert($query, array $bindings = array()) {
+        if (stristr($query, "insert into") !== 0)
+            throw new IllegalArgumentException("Query isn't a valid insert statement (" . $query . ")");
+
         if ($this->isConnected()) {
 
         }
     }
 
     public function update($query, array $bindings = array()) {
+        if (stristr($query, "update ") !== 0)
+            throw new IllegalArgumentException("Query isn't a valid update statement (" . $query . ")");
+
         if ($this->isConnected()) {
 
         }
     }
 
     public function delete($query, array $bindings = array()) {
+        if (stristr($query, "delete from ") !== 0)
+            throw new IllegalArgumentException("Query isn't a valid delete statement (" . $query . ")");
+
         if ($this->isConnected()) {
 
         }
@@ -136,18 +147,18 @@ class Connection implements ConnectionInterface {
                     $stmt = $this->_conn->query('DESC ' . $table);
                     if ($stmt != null) {
                         if ($stmt->execute()) {
-                            $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Driver\\Table');
+                            $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\TableField');
                             while ($record = $stmt->fetch()) {
                                 $data[] = $record;
                             }
                         }
                     }
                 } catch (\PDOException $e) {
-                    throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
+                    throw new DriverException("Unable to fetch table schema: " . $e->getMessage());
                 }
             }
         }
-        var_dump($data);
+
         return $data;
     }
 }
