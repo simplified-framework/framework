@@ -2,6 +2,7 @@
 
 namespace Simplified\DBAL\Driver;
 use Simplified\Core\NullPointerException;
+use Simplified\DBAL\ConnectionException;
 
 class Connection implements ConnectionInterface {
     private $_conn;
@@ -15,8 +16,12 @@ class Connection implements ConnectionInterface {
     
     public function connect() {
         $dsn = $this->getDriverName() . ":host=".$this->getHost().";dbname=".$this->getDatabase();
-        $this->_conn = new \PDO($dsn, $this->getUsername(), $this->getPassword(),
-            array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
+        try {
+            $this->_conn = new \PDO($dsn, $this->getUsername(), $this->getPassword(),
+                array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
+        } catch (\PDOException $e) {
+            throw  new ConnectionException($e->getMessage() . ", " . $dsn);
+        }
 
         if ($this->_conn == null ) {
             throw new NullPointerException('\PDO::__construct('.$dsn.') returned null');
