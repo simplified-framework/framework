@@ -12,16 +12,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Migrate extends Command {
+class MigrateMake extends Command {
     protected function configure() {
         $this
-            ->setName('migrate')
-            ->setDescription('migrate database')
+            ->setName('migrate:make')
+            ->setDescription('migrate database (create script)')
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) {
         $output->writeln('start migrating...');
     }
 }
