@@ -19,7 +19,8 @@ class MigrateMake extends Command {
         $this
             ->setName('migrate:make')
             ->setDescription('migrate database (create script)')
-            ->addArgument('table_name', InputArgument::REQUIRED, 'table name');
+            ->addArgument('script_name', InputArgument::REQUIRED, 'script name')
+            ->addOption('table', InputArgument::REQUIRED, 'table name')
         ;
     }
 
@@ -30,8 +31,9 @@ class MigrateMake extends Command {
             mkdir($migrations_path, 0775, true);
         }
 
-        $table = $input->getArgument('table_name');
-        $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$table.php";
+        $script = $input->getArgument('script_name');
+        $table  = $input->getOption('table');
+        $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$script.php";
         $output->writeln('creating script ' . $file);
 
         $fp = fopen($file, "w");
@@ -39,9 +41,9 @@ class MigrateMake extends Command {
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL
-            . "Schema::create(function(){"
+            . "\t\tSchema::create($table, function(){"
             . PHP_EOL
-            . "});"
+            . "\t\t});"
             . PHP_EOL
             . "\t}"
             . PHP_EOL
