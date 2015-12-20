@@ -19,6 +19,21 @@ function route($name) {
 		}
         return $item;
 	}
-
 	throw new ResourceNotFoundException("No route named $name found. " . $routes->count());
+}
+
+if (class_exists('\\Simplified\\TwigBridge\\TwigRenderer')) {
+	class RouteExtension extends \Twig_Extension {
+		public function getFunctions() {
+			return array(
+				'route'  => new \Twig_SimpleFunction('route',
+					array($this, 'route'),array('is_safe' => array('html'))
+				),
+			);
+		}
+
+		public function route ($name) {
+			return route($name);
+		}
+	}
 }
