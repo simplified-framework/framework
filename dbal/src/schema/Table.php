@@ -25,7 +25,7 @@ class Table {
                     if ($stmt->execute()) {
                         $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\TableField');
                         while ($record = $stmt->fetch()) {
-                            $this->fields[] = $record;
+                            $this->fields[$record->field] = $record;
                         }
                     }
                 }
@@ -37,5 +37,9 @@ class Table {
 
     public function fields() {
         return $this->fields;
+    }
+
+    public function fieldNames() {
+        return array_keys($this->fields()->toArray());
     }
 }

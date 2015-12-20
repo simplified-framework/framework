@@ -50,6 +50,8 @@ class Model {
         $this->driver = new Connection($config[$connection]);
         $table = $this->getTable();
 
+        $t = $this->driver->getDatabaseSchema()->table($table);
+        var_dump($t);
         /*
         $tables = $this->driver->getDatabaseSchema()->toArray();
 
@@ -83,17 +85,6 @@ class Model {
         }
 
         return 'id';
-    }
-    
-    public function getFieldNames() {
-        return $this->getDriver()->getFieldNames($this->getTable());
-    }
-    
-    public function getDriver() {
-        if ($this->driver == null) {
-            $this->init();
-        }
-        return $this->driver;
     }
 
     /*

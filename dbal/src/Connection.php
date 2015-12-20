@@ -18,7 +18,11 @@ class Connection implements ConnectionInterface {
             $this->schema = new Schema($this);
         }
     }
-    
+
+    public function getDatabaseSchema() {
+        return $this->schema;
+    }
+
     public function connect() {
         $dsn = $this->getDriverName() . ":host=".$this->getHost().";dbname=".$this->getDatabase().';charset=utf8';
         try {
@@ -111,47 +115,5 @@ class Connection implements ConnectionInterface {
         if ($this->isConnected()) {
 
         }
-    }
-
-    public function getFieldNames($table) {
-        $data = new Collection();
-        if ($this->isConnected()) {
-            try {
-                $stmt = $this->raw('DESC ' . $table);
-                if ($stmt != null) {
-                    if ($stmt->execute()) {
-                        while ($record = $stmt->fetch(\PDO::FETCH_COLUMN)) {
-                            $data[] = $record;
-                        }
-                    }
-                }
-            } catch (\PDOException $e) {
-                throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
-            }
-        }
-        return $data;
-    }
-
-    public function describeTable($table) {
-        $data = new Collection();
-        if ($this->isConnected()) {
-            if ($this->isConnected()) {
-                try {
-                    $stmt = $this->raw('DESC ' . $table);
-                    if ($stmt != null) {
-                        if ($stmt->execute()) {
-                            $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\TableField');
-                            while ($record = $stmt->fetch()) {
-                                $data[] = $record;
-                            }
-                        }
-                    }
-                } catch (\PDOException $e) {
-                    throw new DriverException("Unable to fetch table schema: " . $e->getMessage());
-                }
-            }
-        }
-
-        return $data;
     }
 }

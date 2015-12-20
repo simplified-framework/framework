@@ -12,13 +12,12 @@ interface ConnectionInterface {
     public function isConnected();
     public function close();
 
+    // schema
+    public function getDatabaseSchema();
+
     // basic table actions
     public function select($query, array $bindings = array());
     public function insert($query, array $bindings = array());
     public function update($query, array $bindings = array());
     public function delete($query, array $bindings = array());
-
-    // database / table info
-    public function describeTable($table);
-    public function getFieldNames($table);
 }
