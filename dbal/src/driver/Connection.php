@@ -66,25 +66,25 @@ class Connection implements ConnectionInterface {
         return isset($this->_params['driver']) ? $this->_params['driver'] : "";
     }
 
-    public function select(string $query, array $bindings = array()) {
+    public function select($query, array $bindings = array()) {
         if ($this->isConnected()) {
 
         }
     }
 
-    public function insert(string $query, array $bindings = array()) {
+    public function insert($query, array $bindings = array()) {
         if ($this->isConnected()) {
 
         }
     }
 
-    public function update(string $query, array $bindings = array()) {
+    public function update($query, array $bindings = array()) {
         if ($this->isConnected()) {
 
         }
     }
 
-    public function delete(string $query, array $bindings = array()) {
+    public function delete($query, array $bindings = array()) {
         if ($this->isConnected()) {
 
         }
@@ -110,7 +110,7 @@ class Connection implements ConnectionInterface {
         return $data;
     }
 
-    public function getFieldNames(string $table) {
+    public function getFieldNames($table) {
         $data = new Collection();
         if ($this->isConnected()) {
             try {
@@ -132,7 +132,7 @@ class Connection implements ConnectionInterface {
         return $data;
     }
 
-    public function describeTable(string $table) {
+    public function describeTable($table) {
         if ($this->isConnected()) {
 
         }

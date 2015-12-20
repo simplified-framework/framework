@@ -13,13 +13,13 @@ interface ConnectionInterface {
     public function close();
 
     // basic table actions
-    public function select(string $query, array $bindings = array());
-    public function insert(string $query, array $bindings = array());
-    public function update(string $query, array $bindings = array());
-    public function delete(string $query, array $bindings = array());
+    public function select($query, array $bindings = array());
+    public function insert($query, array $bindings = array());
+    public function update($query, array $bindings = array());
+    public function delete($query, array $bindings = array());
 
     // database / table info
     public function getDatabaseSchema();
-    public function describeTable(string $table);
-    public function getFieldNames(string $table);
+    public function describeTable($table);
+    public function getFieldNames($table);
 }
