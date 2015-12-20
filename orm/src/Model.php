@@ -3,7 +3,6 @@
 namespace Simplified\Orm;
 use Simplified\Config\Config;
 use Simplified\DBAL\DriverException;
-use Simplified\DBAL\ModelException;
 use Simplified\DBAL\ConnectionException;
 use ReflectionProperty;
 
@@ -19,6 +18,7 @@ class Model {
 	public function __construct($attributes = null) {
         if ($attributes)
             $this->attributes = $attributes;
+        $this->init();
     }
     
     public function __destruct() {
@@ -27,56 +27,41 @@ class Model {
     }
 
     private function init() {
-        $ref = new ReflectionProperty(get_called_class(), 'connection');
-		$connection = $ref->getValue($this);
-
-		$params = Config::getAll('database');
-		
-		if (empty($params) || count($params) == 0) {
-			throw new ConnectionException('No connections found');
+		$config = Config::getAll('database');
+		if (empty($config) || count($config) == 0) {
+			throw new ConnectionException('No database configuration found');
 		}
-		
+
+        $ref = new ReflectionProperty(get_called_class(), 'connection');
+        $connection = $ref->getValue($this);
 		if (null == $connection) {
 			$connection = "default";
 		}
 		
-		if (!isset($params[$connection])) {
-			throw new ConnectionException('connection "' . $connection . '" not found');
+		if (!isset($config[$connection])) {
+			throw new ConnectionException('No database configuration named "' . $connection . '" found');
 		}
 		
-		if (!isset($params[$connection]['driver'])) {
-			throw new ConnectionException('driver parameter not set');
+		if (!isset($config[$connection]['driver'])) {
+			throw new ConnectionException('Database driver parameters not set');
 		}
-		
-		$drivername = strtolower($params[$connection]['driver']);
-        $class = null;
-		if ($drivername == 'mysqli') {
-			$class = "Simplified\\DBAL\\Driver\\MysqliDriver";
-		}
-		else
-		if ($drivername == 'mysql') {
-            $class = "Simplified\\DBAL\\Driver\\MysqlDriver";
-		}
-        else
-		if ($drivername == 'pgsql') {
-            $class = "Simplified\\DBAL\\Driver\\PGSqlDriver";
-		}
-		else
-		if ($drivername == 'sqlite') {
-            $class = "Simplified\\DBAL\\Driver\\SQLiteDriver";
-		}
+
+        $class  = "Simplified\\DBAL\\Driver\\Connection";
+        // No other drivers are currently supported
 
         if (null == $class || !class_exists($class)) {
-            throw new DriverException('Unknown database driver "' . $params[$connection]['driver'].'": please, check your configuration.');
+            throw new DriverException('Unknown database driver "' . $config[$connection]['driver'].'": please, check your configuration!');
         }
 
-        $this->driver = new $class($params[$connection]);
+        $this->driver = new $class($config[$connection]);
+        /*
         $table = $this->getTable();
         $tables = $this->driver->getTables()->toArray();
 
         if (!in_array($table, $tables)) {
-            throw new ModelException('Unknown table ' . $this->getTable());
+            throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
         }
+        */
     }
 	
 	public function getTable() {
@@ -186,9 +171,10 @@ class Model {
 
             $this->$name = $data;
             return $data;
-        } else {
-            if ($this->getProperty($name))
-                return $this->getProperty($name);
+        }
+        else
+        if ($this->getProperty($name)) {
+            return $this->getProperty($name);
         }
 
         return null;
