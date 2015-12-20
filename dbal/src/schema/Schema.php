@@ -17,10 +17,10 @@ class Schema {
     private $schema;
     public function __construct(Connection $driver) {
         $this->driver = $driver;
-        $this->getDatabase();
+        $this->loadSchema();
     }
 
-    public function getDatabase() {
+    private function loadSchema() {
         $this->schema = new Collection();
         if ($this->driver->isConnected()) {
             try {
@@ -39,12 +39,18 @@ class Schema {
             }
         }
 
-        var_dump($this->schema);
-
         return $this->schema;
     }
 
-    public function getTable($name) {
+    public function table($name) {
+        if (isset($this->schema[$name])) {
+            return $this->schema[$name];
+        }
 
+        return null;
+    }
+
+    public function tables() {
+        return $this->schema;
     }
 }
