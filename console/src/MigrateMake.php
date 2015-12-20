@@ -23,7 +23,7 @@ class MigrateMake extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
-        $path = realpath(dirname(__FILE__));
+        $path = getcwd();
         $dbpath = $path . '/app/database/migrations';
         $output->writeln('create script in ' . $dbpath);
     }
