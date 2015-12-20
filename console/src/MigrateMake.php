@@ -35,6 +35,7 @@ class MigrateMake extends Command {
         $output->writeln('creating script ' . $file);
 
         $fp = fopen($file, "w");
+        fwrite($fp, '<?php ' . PHP_EOL . "class XXX extends Migration {" . PHP_EOL . "\tpublic function up() {" . PHP_EOL . "\t}" . PHP_EOL . "}");
         fclose($fp);
     }
 }
