@@ -135,8 +135,9 @@ class Connection implements ConnectionInterface {
                 try {
                     $stmt = $this->_conn->query('DESC ' . $table);
                     if ($stmt != null) {
+                        $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Table');
                         if ($stmt->execute()) {
-                            while ($record = $stmt->fetch(\PDO::FETCH_CLASS, 'Table')) {
+                            while ($record = $stmt->fetch()) {
                                 $data[] = $record;
                             }
                         }
