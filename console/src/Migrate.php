@@ -10,16 +10,16 @@ namespace Simplified\Console;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Command extends Symfony\Component\Console\Command\Command {
+class Migrate extends Symfony\Component\Console\Command\Command {
     protected function configure() {
         $this
-            ->setName('hello')
-            ->setDescription('Say hello')
+            ->setName('migrate')
+            ->setDescription('migrate database')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Hello World');
+        $output->writeln('start migrating...');
     }
 }
