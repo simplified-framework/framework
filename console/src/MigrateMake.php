@@ -31,7 +31,10 @@ class MigrateMake extends Command {
         }
 
         $table = $input->getArgument('table_name');
-        $script = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$table.php";
-        $output->writeln('creating script ' . $script);
+        $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$table.php";
+        $output->writeln('creating script ' . $file);
+
+        $fp = fopen($file, "w");
+        fclose($fp);
     }
 }
