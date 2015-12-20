@@ -97,15 +97,15 @@ class Connection implements ConnectionInterface {
                 $stmt = $this->_conn->query('SHOW TABLES');
                 if ($stmt != null) {
                     if ($stmt->execute()) {
-                        $data = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+                        while ($record = $stmt->fetchAll(\PDO::FETCH_COLUMN)) {
+                            $data[] = $record;
+                        }
                     }
                 }
             } catch (\PDOException $e) {
                 throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
             }
         }
-
-        var_dump($data);
 
         return $data;
     }

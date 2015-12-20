@@ -55,6 +55,7 @@ class Model {
 
         $this->driver = new $class($config[$connection]);
         $table = $this->getTable();
+        var_dump( $this->driver->getDatabaseSchema());
         /*
         $tables = $this->driver->getDatabaseSchema()->toArray();
 
