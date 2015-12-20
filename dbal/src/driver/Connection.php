@@ -31,7 +31,7 @@ class Connection implements ConnectionInterface {
     }
     public function close() {
         if ($this->isConnected()) {
-            $this->_conn->close();
+            $this->_conn = null;
             unset($this->_conn);
         }
     }
