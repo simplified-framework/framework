@@ -50,17 +50,11 @@ class Model {
         $this->driver = new Connection($config[$connection]);
         $table = $this->getTable();
 
-        $t = $this->driver->getDatabaseSchema()->table($table);
-        var_dump($t);
-        /*
-        $tables = $this->driver->getDatabaseSchema()->toArray();
+        $tables = $this->driver->getDatabaseSchema()->tableNames();
 
         if (!in_array($table, $tables)) {
             throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
         }
-
-        $this->driver->describeTable($this->getTable());
-        */
     }
 	
 	public function getTable() {

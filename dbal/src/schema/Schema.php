@@ -53,4 +53,8 @@ class Schema {
     public function tables() {
         return $this->schema;
     }
+
+    public function tableNames() {
+        return array_keys($this->tables()->toArray());
+    }
 }
