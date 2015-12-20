@@ -19,7 +19,8 @@
 		  "Simplified\\Http\\":"http/src/",
 		  "Simplified\\Orm\\":"orm/src/",
           "Simplified\\Session\\":"session/src/",
-          "Simplified\\Log\\":"log/src"
+          "Simplified\\Log\\":"log/src",
+          "Simplified\\Console\\":"console/src"
         },
 		"files": [
 			"http/src/helper.php"
