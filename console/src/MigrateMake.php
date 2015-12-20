@@ -21,7 +21,7 @@ class MigrateMake extends Command {
             ->setName('migrate:make')
             ->setDescription('migrate database (create script)')
             ->addArgument('script_name', InputArgument::REQUIRED, 'script name')
-            ->setDefinition(array(new InputOption('table', 't', InputOption::REQUIRED)))
+            ->setDefinition(array(new InputOption('table', 't', InputArgument::REQUIRED)))
         ;
     }
 
