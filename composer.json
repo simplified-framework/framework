@@ -8,7 +8,8 @@
         }
     ],
     "require": {
-      "psr/log":"1.0.x"
+      "psr/log":"1.0.x",
+      "symfony/console":"2.x"
     },
     "autoload": {
           "psr-4": {
