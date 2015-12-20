@@ -19,7 +19,7 @@ class MigrateMake extends Command {
         $this
             ->setName('migrate:make')
             ->setDescription('migrate database (create script)')
-            ->addArgument('script_name', InputArgument::REQUIRED, 'table name');
+            ->addArgument('table_name', InputArgument::REQUIRED, 'table name');
         ;
     }
 
@@ -30,6 +30,7 @@ class MigrateMake extends Command {
             mkdir($migrations_path, 0775, true);
         }
 
-        $output->writeln('creating script in ' . $migrations_path);
+        $table = $input->getArgument('table_name');
+        $output->writeln('creating script ' . $migrations_path . DIRECTORY_SEPARATOR . "$table.php");
     }
 }
