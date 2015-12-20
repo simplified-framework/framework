@@ -49,26 +49,25 @@ class Model {
 			throw new ConnectionException('Database driver parameters not set');
 		}
 
-        $this->driver = new Connection($config[$connection]);
-
-        if (!$this->driver->getDatabaseSchema()->table($this->getTable())) {
-            throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
+        $model_class = get_called_class();
+        $ref = new ReflectionProperty($model_class, 'table');
+        $table_name = $ref->getValue($this);
+        if (!$table_name) {
+            $parts = explode("\\", $model_class);
+            $end = end($parts);
+            $table_name = strtolower($end);
         }
 
-        $this->metadata = $this->driver->getDatabaseSchema()->table($this->getTable());
+        $this->driver = new Connection($config[$connection]);
+        $this->metadata = $this->driver->getDatabaseSchema()->table($table_name);
+
+        if (!$this->metadata) {
+            throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
+        }
     }
 	
 	public function getTable() {
-        $class = get_called_class();
-        $ref = new ReflectionProperty($class, 'table');
-		$table = $ref->getValue($this);
-        if (null != $table) {
-            return $table;
-        }
-        
-		$parts = explode("\\", $class);
-		$end = end($parts);
-		return strtolower($end);
+        return $this->metadata;
 	}
 
     public function getPrimaryKey() {
@@ -141,7 +140,6 @@ class Model {
             return $data;
         }
     }
-    */
 
     public function __get($name) {
         if (in_array($name, $this->getFieldNames()->toArray())) {
@@ -169,12 +167,10 @@ class Model {
         $this->$key = $val;
     }
 
-    /*
     public static function where ($field, $condition, $value) {
         $class = get_called_class();
         return $class::all()->where($field, $condition, $value);
     }
-    */
 
     public function delete() {
         // TODO who can delete this record?
@@ -183,5 +179,6 @@ class Model {
     public function save() {
         // TODO who can save this record?
     }
+    */
 }
 

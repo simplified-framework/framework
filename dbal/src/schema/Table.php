@@ -42,4 +42,8 @@ class Table {
     public function fieldNames() {
         return array_keys($this->fields()->toArray());
     }
+
+    public function name() {
+        return $this->name;
+    }
 }
