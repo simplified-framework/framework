@@ -8,11 +8,15 @@ use Simplified\Core\NullPointerException;
 class Connection implements ConnectionInterface {
     private $_conn;
     private $_params = array();
+    private $schema;
     
     public function __construct(array $params = array()) {
         $this->_params = $params;
         $this->_conn = null;
-        $this->connect();
+        if ($this->connect() ){
+            $this->schema = new Schema($this);
+
+        }
     }
     
     public function connect() {
@@ -27,7 +31,7 @@ class Connection implements ConnectionInterface {
         if ($this->_conn == null ) {
             throw new NullPointerException('\PDO::__construct('.$dsn.') returned null');
         }
-        
+
         return $this->isConnected();
     }
     public function close() {

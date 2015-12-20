@@ -17,6 +17,7 @@ class Schema {
     private $schema;
     public function __construct(Connection $driver) {
         $this->driver = $driver;
+        $this->getDatabase();
     }
 
     public function getDatabase() {
@@ -29,7 +30,7 @@ class Schema {
                         $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
                         while ($record = $stmt->fetch()) {
                             $table = new Table($this->driver);
-                            $table->name = $record;
+                            $table->setName($record);
                             $this->schema[] = $table;
                         }
                     }

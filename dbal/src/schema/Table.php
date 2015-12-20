@@ -15,26 +15,19 @@ use Simplified\DBAL\Connection;
 class Table {
     private $fields;
     private $driver;
+    private $name;
 
     public function __construct(Connection $driver) {
         $this->fields = new Collection();
         $this->driver = $driver;
     }
 
-    public function __set($field, $value) {
-        if (isset($this->fields[$field]))
-            return;
-
-        if (isset($this->$field))
-            return;
-
-        $this->fields[$field] = $value;
-    }
-
-    public function __get($field) {
-        if (isset($this->$field))
-            return $this->$field;
-
-        return $this->fields[$field];
+    public function __call($method, $arg = null) {
+        if ($method == "setName") {
+            $this->name = $arg;
+        }
+        if ($method == "getName") {
+            return $this->name;
+        }
     }
 }

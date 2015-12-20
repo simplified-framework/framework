@@ -6,7 +6,6 @@ use Simplified\Config\Config;
 use Simplified\DBAL\Connection;
 use Simplified\DBAL\ConnectionException;
 use ReflectionProperty;
-use Simplified\DBAL\Schema\Schema;
 
 class Model {
 	private $driver = null;
@@ -50,9 +49,6 @@ class Model {
 
         $this->driver = new Connection($config[$connection]);
         $table = $this->getTable();
-
-        $schema = new Schema($this->driver);
-        $schema->getDatabase();
 
         /*
         $tables = $this->driver->getDatabaseSchema()->toArray();
