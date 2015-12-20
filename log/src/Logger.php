@@ -18,7 +18,7 @@ class Logger extends AbstractLogger {
 
     public function log($level, $message, array $context = array()) {
         if ($this->ensureLogDir()) {
-            $file = self::$logdir . DIRECTORY_SEPARATOR . $level . ".txt";
+            $file = self::$logdir . DIRECTORY_SEPARATOR . "messages.txt";
             $lastLine = $this->getLastFileLine($file);
             if (strstr($lastLine, $message) !== false) {
                 return;
