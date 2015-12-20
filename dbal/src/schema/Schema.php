@@ -18,6 +18,8 @@ class Schema {
     public function __construct(Connection $driver) {
         $this->driver = $driver;
         $this->loadSchema();
+
+        var_dump($this->schema);
     }
 
     private function loadSchema() {

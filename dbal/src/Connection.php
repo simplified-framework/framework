@@ -16,7 +16,6 @@ class Connection implements ConnectionInterface {
         $this->_conn = null;
         if ($this->connect() ){
             $this->schema = new Schema($this);
-
         }
     }
     
