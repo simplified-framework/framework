@@ -97,7 +97,7 @@ class Connection implements ConnectionInterface {
                 $stmt = $this->_conn->query('SHOW TABLES');
                 if ($stmt != null) {
                     if ($stmt->execute()) {
-                        while ($record = $stmt->fetchAll(\PDO::FETCH_COLUMN)) {
+                        while ($record = $stmt->fetch(\PDO::FETCH_COLUMN)) {
                             $data[] = $record;
                         }
                     }
