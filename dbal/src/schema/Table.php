@@ -8,6 +8,7 @@
 
 namespace Simplified\DBAL\Schema;
 
+use Simplified\Core\Collection;
 use Simplified\DBAL\Connection;
 
 class Table {
