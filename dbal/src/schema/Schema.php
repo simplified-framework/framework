@@ -10,6 +10,7 @@ namespace Simplified\DBAL\Schema;
 
 use Simplified\Core\Collection;
 use Simplified\DBAL\Connection;
+use Simplified\DBAL\DriverException;
 
 class Schema {
     private $driver;
