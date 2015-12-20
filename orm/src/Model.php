@@ -5,6 +5,7 @@ namespace Simplified\Orm;
 use Simplified\Config\Config;
 use Simplified\DBAL\Connection;
 use Simplified\DBAL\ConnectionException;
+use Simplified\DBAL\ModelException;
 use ReflectionProperty;
 
 class Model {
