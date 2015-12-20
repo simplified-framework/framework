@@ -20,7 +20,7 @@ class Table {
         $this->fields = new Collection();
         if ($driver->isConnected()) {
             try {
-                $stmt = $this->raw('DESC ' . $name);
+                $stmt = $driver->raw('DESC ' . $name);
                 if ($stmt != null) {
                     if ($stmt->execute()) {
                         $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\TableField');
