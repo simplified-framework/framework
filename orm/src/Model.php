@@ -2,6 +2,7 @@
 
 namespace Simplified\Orm;
 use Simplified\Config\Config;
+use Simplified\DBAL\Driver\Connection;
 use Simplified\DBAL\DriverException;
 use Simplified\DBAL\ConnectionException;
 use ReflectionProperty;
@@ -46,20 +47,15 @@ class Model {
 			throw new ConnectionException('Database driver parameters not set');
 		}
 
-        $class  = "Simplified\\DBAL\\Driver\\Connection";
-        // No other drivers are currently supported
-
-        if (null == $class || !class_exists($class)) {
-            throw new DriverException('Unknown database driver "' . $config[$connection]['driver'].'": please, check your configuration!');
-        }
-
-        $this->driver = new $class($config[$connection]);
+        $this->driver = new Connection($config[$connection]);
         $table = $this->getTable();
         $tables = $this->driver->getDatabaseSchema()->toArray();
 
         if (!in_array($table, $tables)) {
             throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
         }
+
+        $this->getFieldNames();
     }
 	
 	public function getTable() {
@@ -96,7 +92,8 @@ class Model {
         }
         return $this->driver;
     }
-	
+
+    /*
 	public static function all() {
         $class = get_called_class();
         $instance = new $class();
@@ -155,6 +152,7 @@ class Model {
             return $data;
         }
     }
+    */
 
     public function __get($name) {
         if (in_array($name, $this->getFieldNames()->toArray())) {
@@ -182,10 +180,12 @@ class Model {
         $this->$key = $val;
     }
 
+    /*
     public static function where ($field, $condition, $value) {
         $class = get_called_class();
         return $class::all()->where($field, $condition, $value);
     }
+    */
 
     public function delete() {
         // TODO who can delete this record?

@@ -111,9 +111,25 @@ class Connection implements ConnectionInterface {
     }
 
     public function getFieldNames(string $table) {
+        $data = new Collection();
         if ($this->isConnected()) {
-
+            try {
+                $stmt = $this->_conn->query('DESC ' . $table);
+                if ($stmt != null) {
+                    if ($stmt->execute()) {
+                        while ($record = $stmt->fetch(\PDO::FETCH_COLUMN)) {
+                            $data[] = $record;
+                        }
+                    }
+                }
+            } catch (\PDOException $e) {
+                throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
+            }
         }
+
+        var_dump($data);
+
+        return $data;
     }
 
     public function describeTable(string $table) {
