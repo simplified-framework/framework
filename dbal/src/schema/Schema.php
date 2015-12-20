@@ -12,8 +12,9 @@ use Simplified\DBAL\Connection;
 
 class Schema {
     private $driver;
+    private $schema;
     public function __construct(Connection $driver) {
-        $this->driver = driver;
+        $this->driver = $driver;
     }
 
     public function getDatabase() {
