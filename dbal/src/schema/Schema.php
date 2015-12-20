@@ -29,7 +29,7 @@ class Schema {
                     if ($stmt->execute()) {
                         $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
                         while ($name = $stmt->fetch()) {
-                            $table = new Table($name);
+                            $table = new Table($name, $this);
                             $this->schema[$name] = $table;
                         }
                     }
