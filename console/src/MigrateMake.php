@@ -12,6 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Simplified\Config\Config;
 
 class MigrateMake extends Command {
@@ -20,7 +21,7 @@ class MigrateMake extends Command {
             ->setName('migrate:make')
             ->setDescription('migrate database (create script)')
             ->addArgument('script_name', InputArgument::REQUIRED, 'script name')
-            ->addOption('table', null, InputArgument::REQUIRED)
+            ->setDefinition(array(new InputOption('table', 't', InputOption::REQUIRED)))
         ;
     }
 
