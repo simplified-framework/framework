@@ -127,14 +127,28 @@ class Connection implements ConnectionInterface {
             }
         }
 
-        var_dump($data);
-
         return $data;
     }
 
     public function describeTable($table) {
         if ($this->isConnected()) {
+            $data = new Collection();
+            if ($this->isConnected()) {
+                try {
+                    $stmt = $this->_conn->query('DESC ' . $table);
+                    if ($stmt != null) {
+                        if ($stmt->execute()) {
+                            while ($record = $stmt->fetch()) {
+                                $data[] = $record;
+                            }
+                        }
+                    }
+                } catch (\PDOException $e) {
+                    throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
+                }
+            }
 
+            return $data;
         }
     }
 }
