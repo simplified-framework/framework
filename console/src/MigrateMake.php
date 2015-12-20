@@ -11,6 +11,7 @@ namespace Simplified\Console;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Simplified\Config\Config;
 
 class MigrateMake extends Command {
     protected function configure() {
@@ -21,6 +22,7 @@ class MigrateMake extends Command {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $output->writeln('created script...');
+        $dbpath = __DIR__.'/app/database/migrations';
+        $output->writeln('create script in ' . $dbpath);
     }
 }
