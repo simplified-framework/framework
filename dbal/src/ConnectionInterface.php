@@ -19,7 +19,6 @@ interface ConnectionInterface {
     public function delete($query, array $bindings = array());
 
     // database / table info
-    public function getDatabaseSchema();
     public function describeTable($table);
     public function getFieldNames($table);
 }
