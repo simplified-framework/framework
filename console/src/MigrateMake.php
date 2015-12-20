@@ -22,11 +22,12 @@ class MigrateMake extends Command {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $migrations_path = APP_PATH . 'database/migrations';
-        if (file_exists($migrations_path)) {
-            $output->writeln('create script in ' . $migrations_path);
-        } else {
-            $output->writeln('unable to create script in ' . $migrations_path . ": not a directory");
+        $migrations_path = APP_PATH . 'database' . DIRECTORY_SEPARATOR . 'migrations';
+        if (!file_exists($migrations_path)) {
+            $output->writeln('creating directory ' . $migrations_path);
+            mkdir($migrations_path, 0775, true);
         }
+
+        $output->writeln('creating script in ' . $migrations_path);
     }
 }
