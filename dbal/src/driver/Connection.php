@@ -106,7 +106,6 @@ class Connection implements ConnectionInterface {
                 throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
             }
         }
-
         return $data;
     }
 
@@ -126,13 +125,12 @@ class Connection implements ConnectionInterface {
                 throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
             }
         }
-
         return $data;
     }
 
     public function describeTable($table) {
+        $data = new Collection();
         if ($this->isConnected()) {
-            $data = new Collection();
             if ($this->isConnected()) {
                 try {
                     $stmt = $this->_conn->query('DESC ' . $table);
@@ -147,8 +145,8 @@ class Connection implements ConnectionInterface {
                     throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
                 }
             }
-
-            return $data;
         }
+        var_dump($data);
+        return $data;
     }
 }

@@ -55,7 +55,7 @@ class Model {
             throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
         }
 
-        $this->driver->describeTable();
+        $this->driver->describeTable($this->getTable());
     }
 	
 	public function getTable() {
