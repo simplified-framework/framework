@@ -11,6 +11,7 @@ use ReflectionProperty;
 class Model {
 	private $driver = null;
     private $attributes = null;
+    private $metadata;
     static  $hasMany;
 	static  $connection;
     static  $primaryKey;
@@ -49,13 +50,12 @@ class Model {
 		}
 
         $this->driver = new Connection($config[$connection]);
-        $table = $this->getTable();
 
-        $tables = $this->driver->getDatabaseSchema()->tableNames();
-
-        if (!in_array($table, $tables)) {
+        if (!$this->driver->getDatabaseSchema()->table($this->getTable())) {
             throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
         }
+
+        $this->metadata = $this->driver->getDatabaseSchema()->table($this->getTable());
     }
 	
 	public function getTable() {

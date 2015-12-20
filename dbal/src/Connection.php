@@ -1,7 +1,6 @@
 <?php
 
 namespace Simplified\DBAL;
-use Simplified\Core\Collection;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Core\NullPointerException;
 use Simplified\DBAL\Schema\Schema;
