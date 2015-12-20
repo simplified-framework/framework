@@ -54,9 +54,9 @@ class Model {
         }
 
         $this->driver = new $class($config[$connection]);
-        /*
         $table = $this->getTable();
-        $tables = $this->driver->getTables()->toArray();
+        /*
+        $tables = $this->driver->getDatabaseSchema()->toArray();
 
         if (!in_array($table, $tables)) {
             throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');

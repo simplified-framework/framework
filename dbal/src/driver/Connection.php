@@ -1,8 +1,10 @@
 <?php
 
 namespace Simplified\DBAL\Driver;
+use Simplified\Core\Collection;
 use Simplified\Core\NullPointerException;
 use Simplified\DBAL\ConnectionException;
+use Simplified\DBAL\DriverException;
 
 class Connection implements ConnectionInterface {
     private $_conn;
@@ -15,7 +17,7 @@ class Connection implements ConnectionInterface {
     }
     
     public function connect() {
-        $dsn = $this->getDriverName() . ":host=".$this->getHost().";dbname=".$this->getDatabase();
+        $dsn = $this->getDriverName() . ":host=".$this->getHost().";dbname=".$this->getDatabase().';charset=utf8';
         try {
             $this->_conn = new \PDO($dsn, $this->getUsername(), $this->getPassword(),
                 array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
@@ -62,5 +64,61 @@ class Connection implements ConnectionInterface {
 
     public function getDriverName() {
         return isset($this->_params['driver']) ? $this->_params['driver'] : "";
+    }
+
+    public function select(string $query, array $bindings = array()) {
+        if ($this->isConnected()) {
+
+        }
+    }
+
+    public function insert(string $query, array $bindings = array()) {
+        if ($this->isConnected()) {
+
+        }
+    }
+
+    public function update(string $query, array $bindings = array()) {
+        if ($this->isConnected()) {
+
+        }
+    }
+
+    public function delete(string $query, array $bindings = array()) {
+        if ($this->isConnected()) {
+
+        }
+    }
+
+    public function getDatabaseSchema() {
+        $data = new Collection();
+        if ($this->isConnected()) {
+            try {
+                $stmt = $this->_conn->query('SHOW TABLES');
+                if ($stmt != null) {
+                    if ($stmt->execute()) {
+                        $data = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+                    }
+                }
+            } catch (\PDOException $e) {
+                throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
+            }
+        }
+
+        var_dump($data);
+
+        return $data;
+    }
+
+    public function getFieldNames(string $table) {
+        if ($this->isConnected()) {
+
+        }
+    }
+
+    public function describeTable(string $table) {
+        if ($this->isConnected()) {
+
+        }
     }
 }
