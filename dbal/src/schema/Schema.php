@@ -26,7 +26,7 @@ class Schema {
                 $stmt = $this->driver->raw('SHOW TABLES');
                 if ($stmt != null) {
                     if ($stmt->execute()) {
-                        $stmt->setFetchMode(\PDO::FETCH_COLUMN);
+                        $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
                         while ($record = $stmt->fetch()) {
                             $table = new Table($this->driver);
                             $table->name = $record;
