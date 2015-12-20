@@ -65,6 +65,14 @@ class Connection implements ConnectionInterface {
         return isset($this->_params['driver']) ? $this->_params['driver'] : "";
     }
 
+    public function raw($query) {
+        $stmt = null;
+        if ($this->isConnected()) {
+            $stmt = $this->_conn->query($query);
+        }
+        return $stmt;
+    }
+
     public function select($query, array $bindings = array()) {
         if (stristr($query, "select ") !== 0)
             throw new IllegalArgumentException("Query isnt a valid select statement (" . $query . ")");
@@ -101,30 +109,11 @@ class Connection implements ConnectionInterface {
         }
     }
 
-    public function getDatabaseSchema() {
-        $data = new Collection();
-        if ($this->isConnected()) {
-            try {
-                $stmt = $this->_conn->query('SHOW TABLES');
-                if ($stmt != null) {
-                    if ($stmt->execute()) {
-                        while ($record = $stmt->fetch(\PDO::FETCH_COLUMN)) {
-                            $data[] = $record;
-                        }
-                    }
-                }
-            } catch (\PDOException $e) {
-                throw new DriverException("Unable to fetch database schema: " . $e->getMessage());
-            }
-        }
-        return $data;
-    }
-
     public function getFieldNames($table) {
         $data = new Collection();
         if ($this->isConnected()) {
             try {
-                $stmt = $this->_conn->query('DESC ' . $table);
+                $stmt = $this->raw('DESC ' . $table);
                 if ($stmt != null) {
                     if ($stmt->execute()) {
                         while ($record = $stmt->fetch(\PDO::FETCH_COLUMN)) {
@@ -144,7 +133,7 @@ class Connection implements ConnectionInterface {
         if ($this->isConnected()) {
             if ($this->isConnected()) {
                 try {
-                    $stmt = $this->_conn->query('DESC ' . $table);
+                    $stmt = $this->raw('DESC ' . $table);
                     if ($stmt != null) {
                         if ($stmt->execute()) {
                             $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\TableField');
