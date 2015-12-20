@@ -23,7 +23,7 @@ function route($name) {
 }
 
 if (class_exists('\\Simplified\\TwigBridge\\TwigRenderer')) {
-	class RouteExtension extends \Twig_Extension {
+	class SimplifiedRouteExtension extends \Twig_Extension {
 		public function getFunctions() {
 			return array(
 				'route'  => new \Twig_SimpleFunction('route',
@@ -35,5 +35,11 @@ if (class_exists('\\Simplified\\TwigBridge\\TwigRenderer')) {
 		public function route ($name) {
 			return route($name);
 		}
+
+		public function getName() {
+			return 'SimplifiedRouteExtension';
+		}
 	}
+
+	\Simplified\TwigBridge\TwigRenderer::registerExtension(new SimplifiedRouteExtension());
 }
