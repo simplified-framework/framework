@@ -25,7 +25,7 @@ class Schema {
                 $stmt = $this->driver->raw('SHOW TABLES');
                 if ($stmt != null) {
                     if ($stmt->execute()) {
-                        $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\Table');
+                        $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\Table', array($this->driver));
                         while ($record = $stmt->fetch()) {
                             $this->schema[] = $record;
                         }
