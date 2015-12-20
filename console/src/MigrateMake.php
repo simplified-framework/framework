@@ -20,7 +20,7 @@ class MigrateMake extends Command {
             ->setName('migrate:make')
             ->setDescription('migrate database (create script)')
             ->addArgument('script_name', InputArgument::REQUIRED, 'script name')
-            ->addOption('table', InputArgument::REQUIRED, 'table name')
+            ->addOption('table', null, InputArgument::REQUIRED)
         ;
     }
 
