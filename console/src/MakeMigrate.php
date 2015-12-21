@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Doctrine\Common\Inflector\Inflector;
 
 class MakeMigrate extends Command {
     protected function configure() {
@@ -36,8 +37,9 @@ class MakeMigrate extends Command {
         $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$script.php";
         $output->writeln('creating script ' . $file);
 
+        $table = Inflector::camelize($table);
         $fp = fopen($file, "w");
-        fwrite($fp, '<?php ' . PHP_EOL . "class $table {"
+        fwrite($fp, '<?php ' . PHP_EOL . "class {$table} {"
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL
