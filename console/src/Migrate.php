@@ -17,6 +17,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+function endsWith($haystack, $needle) {
+    return $needle === "" ||
+        (($temp = strlen($haystack) - strlen($needle)) >= 0 &&
+            strpos($haystack, $needle, $temp) !== FALSE);
+}
+
 class Migrate extends Command {
     protected function configure() {
         $this
@@ -35,7 +41,8 @@ class Migrate extends Command {
         if ($handle = opendir($migrations_path)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && !is_dir($entry)) {
-                    $files[] = $migrations_path . DIRECTORY_SEPARATOR . $entry;
+                    if (endsWith($entry, ".php"))
+                        $files[] = $migrations_path . DIRECTORY_SEPARATOR . $entry;
                 }
             }
             closedir($handle);
@@ -43,14 +50,15 @@ class Migrate extends Command {
             return;
         }
 
-        // TODO check files in database table migrations
-        // TODO if already migrated, remove from array
+        // get (default) database connection
         $conf = Config::getAll('database');
         $default_config = isset($conf['default']) ? $conf['default'] : null;
         if ($default_config == null)
             throw new ConnectionException('No default connection set');
-
         $conn = new Connection($default_config);
+
+        // find migrations table. if something is going wrong
+        // a exception is triggered
         $migrations = $conn->getDatabaseSchema()->table('migrations');
         if ($migrations == null) {
             $migrations = new Blueprint('migrations');
@@ -59,8 +67,14 @@ class Migrate extends Command {
                 ->timestamps()
                 ->primary('id')
             ;
+
+            // create table migrations
+            // if something is going wrong a exception is triggered
             $migrations->build($conn);
         }
+
+        // TODO check files in database table migrations
+        // TODO if already migrated, remove from array
 
         foreach ($files as $file) {
             $content = file_get_contents($file);
