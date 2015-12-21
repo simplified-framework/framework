@@ -44,25 +44,19 @@ class Model {
 		if (!isset($config[$connection])) {
 			throw new ConnectionException('No database configuration named "' . $connection . '" found');
 		}
-		
-		if (!isset($config[$connection]['driver'])) {
-			throw new ConnectionException('Database driver parameters not set');
-		}
 
         $model_class = get_called_class();
         $ref = new ReflectionProperty($model_class, 'table');
         $table_name = $ref->getValue($this);
         if (!$table_name) {
-            $parts = explode("\\", $model_class);
-            $end = end($parts);
-            $table_name = strtolower($end);
+            $table_name = strtolower(basename($model_class));
         }
 
         $this->driver = new Connection($config[$connection]);
         $this->metadata = $this->driver->getDatabaseSchema()->table($table_name);
 
         if (!$this->metadata) {
-            throw new ModelException('Unknown table ' . $this->getTable() . ' in database schema');
+            throw new ModelException('Unknown table ' . $this->getTable()->name() . ' in database schema');
         }
     }
 	
