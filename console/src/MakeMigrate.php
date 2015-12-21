@@ -39,7 +39,7 @@ class MakeMigrate extends Command {
 
         $table = Inflector::ucwords($table);
         $fp = fopen($file, "w");
-        fwrite($fp, '<?php ' . PHP_EOL . "class {$table} {"
+        fwrite($fp, '<?php ' . PHP_EOL . PHP_EOL . "class {$table} {"
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL
