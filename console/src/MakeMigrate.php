@@ -13,15 +13,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Simplified\Config\Config;
 
-class MigrateMake extends Command {
+class MakeMigrate extends Command {
     protected function configure() {
         $this
-            ->setName('migrate:make')
+            ->setName('make:migrate')
             ->setDescription('migrate database (create script)')
             ->addArgument('script_name', InputArgument::REQUIRED, 'script name')
-            ->addoption('table', 't', InputOption::VALUE_REQUIRED)
+            ->addOption('table', 't', InputOption::VALUE_REQUIRED)
         ;
     }
 
@@ -38,7 +37,7 @@ class MigrateMake extends Command {
         $output->writeln('creating script ' . $file);
 
         $fp = fopen($file, "w");
-        fwrite($fp, '<?php ' . PHP_EOL . "class $table extends Migration {"
+        fwrite($fp, '<?php ' . PHP_EOL . "class $table {"
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL
