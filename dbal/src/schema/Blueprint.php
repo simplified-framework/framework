@@ -10,6 +10,13 @@ namespace Simplified\DBAL\Schema;
 
 use Simplified\DBAL\Connection;
 
+function tick($value) {
+    if (!is_numeric($value)) {
+        return sprintf("`%s`", $value);
+    }
+    return $value;
+}
+
 class Blueprint {
     const MODE_CREATE = 1;
     const MODE_DROP = 2;
@@ -20,12 +27,12 @@ class Blueprint {
     private $mode = Blueprint::MODE_CREATE;
 
     public function __construct($table) {
-        $this->table = $table;
+        $this->table = tick($table);
     }
 
     public function increments($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "int";
         $field->extra = "auto_increment";
         $field->null = false;
@@ -37,7 +44,7 @@ class Blueprint {
 
     public function string($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "varchar(255)";
         $field->extra = null;
         $field->null = false;
@@ -49,7 +56,7 @@ class Blueprint {
 
     public function text($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "text";
         $field->extra = null;
         $field->null = false;
@@ -61,7 +68,7 @@ class Blueprint {
 
     public function binary($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "blob";
         $field->extra = null;
         $field->null = false;
@@ -73,7 +80,7 @@ class Blueprint {
 
     public function tinyInteger($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "tinyint";
         $field->extra = null;
         $field->null = false;
@@ -85,7 +92,7 @@ class Blueprint {
 
     public function smallInteger($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "smallint";
         $field->extra = null;
         $field->null = false;
@@ -97,7 +104,7 @@ class Blueprint {
 
     public function mediumInteger($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "mediumint";
         $field->extra = null;
         $field->null = false;
@@ -109,7 +116,7 @@ class Blueprint {
 
     public function integer($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "int";
         $field->extra = null;
         $field->null = false;
@@ -121,7 +128,7 @@ class Blueprint {
 
     public function bigInteger($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "bigint";
         $field->extra = null;
         $field->null = false;
@@ -133,7 +140,7 @@ class Blueprint {
 
     public function dateTime($fieldName) {
         $field = new TableField();
-        $field->name = $fieldName;
+        $field->name = tick($fieldName);
         $field->type = "datetime";
         $field->extra = null;
         $field->null = false;
@@ -145,8 +152,8 @@ class Blueprint {
 
     public function timestamps() {
         $field1 = new TableField();
-        $field1->name = 'created_at';
-        $field1->type = "timestamp";
+        $field1->name = tick('created_at');
+        $field1->type = 'timestamp';
         $field1->extra = null;
         $field1->null = false;
         $field1->unique = false;
@@ -154,8 +161,8 @@ class Blueprint {
         $this->fields[] = $field1;
 
         $field2 = new TableField();
-        $field2->name = 'updated_at';
-        $field2->type = "timestamp";
+        $field2->name = tick('updated_at');
+        $field2->type = 'timestamp';
         $field2->extra = 'on update current_timestamp';
         $field2->null = false;
         $field2->unique = false;
@@ -166,7 +173,7 @@ class Blueprint {
     }
 
     public function primary($fieldName) {
-        $this->pk = $fieldName;
+        $this->pk = tick($fieldName);
         return $this;
     }
 
@@ -189,6 +196,7 @@ class Blueprint {
     }
 
     public function defaults($value) {
+        $value = tick($value);
         $this->fields[count($this->fields)-1]->default = $value;
         return $this;
     }
@@ -199,7 +207,7 @@ class Blueprint {
             if (count($this->fields) == 0)
                 return "";
 
-            $sql = "create table if not exists `" . $this->table . "` (";
+            $sql = "create table if not exists " . $this->table . " (";
             foreach ($this->fields as $field) {
                 $f  = $field->name;
 
@@ -242,6 +250,8 @@ class Blueprint {
                 $sql .= ", ";
             $sql .= implode(", ", $uniques);
             $sql .= ")";
+
+            print $sql;
 
             return $sql;
         }
