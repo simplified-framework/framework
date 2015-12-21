@@ -44,7 +44,9 @@ class MakeMigrate extends Command {
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL
-            . "\t\t".'Schema::create("'.$table.'", function(BluePrint $bp) {'
+            . "\t\t".'Schema::create(\''.$table.'\', function(Blueprint $bp) {'
+            . PHP_EOL
+            . "\t\t\t // TODO define table structure"
             . PHP_EOL
             . "\t\t});"
             . PHP_EOL
@@ -54,6 +56,7 @@ class MakeMigrate extends Command {
             . "\tpublic function down() {"
             . PHP_EOL
             . "\t\t".'Schema::drop("'.$table.'");'
+            . PHP_EOL
             . "\t}" . PHP_EOL . "}" . PHP_EOL
         );
         fclose($fp);
