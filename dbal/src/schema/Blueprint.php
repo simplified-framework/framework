@@ -246,19 +246,18 @@ class Blueprint {
                     $uniques[] = 'unique ('.$field->name.')';
             }
 
-            if (count($uniques) > 0)
+            if (count($uniques) > 0) {
                 $sql .= ", ";
-            $sql .= implode(", ", $uniques);
-            $sql .= ")";
+                $sql .= implode(", ", $uniques);
+            }
 
-            print $sql;
-
+            $sql .= ");";
             return $sql;
         }
     }
 
     public function build(Connection $conn) {
         $sql = $this->toSql();
-        return strlen($sql) > 0 ? $conn->raw($this->toSql()) : false;
+        return strlen($sql) > 0 ? $conn->raw($sql) : false;
     }
 }
