@@ -34,21 +34,8 @@ class Migrate extends Command {
     protected function execute(InputInterface $input, OutputInterface $output) {
         $output->writeln('start migrating...');
         $migrations_path = APP_PATH . 'database' . DIRECTORY_SEPARATOR . 'migrations';
-        if (!file_exists($migrations_path))
+        if (!file_exists($migrations_path)) // if dir doesn't exists, nothing is to migrate
             return;
-
-        $files = array();
-        if ($handle = opendir($migrations_path)) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && !is_dir($entry)) {
-                    if (endsWith($entry, ".php"))
-                        $files[] = $migrations_path . DIRECTORY_SEPARATOR . $entry;
-                }
-            }
-            closedir($handle);
-        } else {
-            return;
-        }
 
         // get (default) database connection
         $conf = Config::getAll('database');
@@ -75,6 +62,23 @@ class Migrate extends Command {
 
         // TODO check files in database table migrations
         // TODO if already migrated, remove from array
+
+        $files = array();
+        if ($handle = opendir($migrations_path)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != ".." && !is_dir($entry)) {
+                    if (endsWith($entry, ".php")) {
+                        $basename = basename($entry, '.php');
+                        $ret = $conn->raw("select name from migrations where name = '$basename' limit 1");
+                        print_r($ret);
+                        $files[] = $migrations_path . DIRECTORY_SEPARATOR . $entry;
+                    }
+                }
+            }
+            closedir($handle);
+        } else {
+            return;
+        }
 
         foreach ($files as $file) {
             $content = file_get_contents($file);
