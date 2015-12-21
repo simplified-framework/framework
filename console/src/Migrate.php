@@ -8,6 +8,11 @@
 
 namespace Simplified\Console;
 
+use Simplified\Config\Config;
+use Simplified\Core\IllegalArgumentException;
+use Simplified\DBAL\Connection;
+use Simplified\DBAL\ConnectionException;
+use Simplified\DBAL\Schema\Blueprint;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,5 +27,64 @@ class Migrate extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $output->writeln('start migrating...');
+        $migrations_path = APP_PATH . 'database' . DIRECTORY_SEPARATOR . 'migrations';
+        if (!file_exists($migrations_path))
+            return;
+
+        $files = array();
+        if ($handle = opendir($migrations_path)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != ".." && !is_dir($entry)) {
+                    $files[] = $migrations_path . DIRECTORY_SEPARATOR . $entry;
+                }
+            }
+            closedir($handle);
+        } else {
+            return;
+        }
+
+        // TODO check files in database table migrations
+        // TODO if already migrated, remove from array
+        $conf = Config::getAll('database');
+        $default_config = isset($conf['default']) ? $conf['default'] : null;
+        if ($default_config == null)
+            throw new ConnectionException('No default connection set');
+
+        $conn = new Connection($default_config);
+        $migrations = $conn->getDatabaseSchema()->table('migrations');
+        if ($migrations == null) {
+            $migrations = new Blueprint('migrations');
+            $migrations->increments('id')
+                ->string('name')->unique()
+                ->timestamps()
+                ->primary('id')
+            ;
+            $migrations->build($conn);
+        }
+
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            $lines = explode(PHP_EOL, $content);
+            foreach ($lines as $line) {
+                if (preg_match('/class[\s]+([a-zA-Z]+)/', $line, $matches)) {
+                    include $file;
+
+                    $clazz = $matches[1];
+                    if (!class_exists($clazz))
+                        throw new IllegalArgumentException("Class $clazz doesn't exists");
+
+                    $instance = new $clazz();
+                    if (!$instance instanceof MigrateInterface)
+                        throw new IllegalArgumentException("Class $clazz doesn't implements MigrateInterface");
+
+                    $instance->up();
+
+                    // register migration in database
+                    $conn->raw('insert into migrations (name, created_at) VALUES ("'.basename($file, '.php').'", null)');
+                    $output->writeln('Migrated table class ' . $clazz);
+                }
+            }
+        }
+        $output->writeln('finished migrating...');
     }
 }

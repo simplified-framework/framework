@@ -38,9 +38,19 @@ class MakeMigrate extends Command {
         $output->writeln('creating script ' . $file);
 
         $table = strtolower($table);
-        $className = Inflector::ucwords($table);
+        $className = Inflector::classify($table);
         $fp = fopen($file, "w");
-        fwrite($fp, '<?php ' . PHP_EOL . PHP_EOL . "class {$className} {"
+        fwrite($fp, '<?php '
+            . PHP_EOL
+            . PHP_EOL
+            . "use Simplified\\DBAL\\Schema\\Schema;"
+            . PHP_EOL
+            . "use Simplified\\DBAL\\Schema\\Blueprint;"
+            . PHP_EOL
+            . "use Simplified\\Console\\MigrateInterface;"
+            . PHP_EOL
+            . PHP_EOL
+            . "class {$className} extends MigrateInterface {"
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL

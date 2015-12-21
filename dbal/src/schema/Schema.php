@@ -8,7 +8,9 @@
 
 namespace Simplified\DBAL\Schema;
 
+use Simplified\Config\Config;
 use Simplified\Core\Collection;
+use Simplified\Core\IllegalArgumentException;
 use Simplified\DBAL\Connection;
 use Simplified\DBAL\DriverException;
 
@@ -56,5 +58,28 @@ class Schema {
 
     public function tableNames() {
         return array_keys($this->tables()->toArray());
+    }
+
+    public static function create($table, \Closure $fn) {
+        $bp = new Blueprint($table);
+        $fn($bp);
+
+        $connectionName = 'default';
+        $trace = debug_backtrace();
+        if (isset($trace[1]) && isset($trace[1]['object'])) {
+            $clazz = get_class($trace[1]['object']);
+            if ($clazz != null && class_exists($clazz)) {
+                $ref = new \ReflectionMethod($clazz, 'getConnection');
+                $attribute = $ref->invoke($trace[1]['object']);
+                if ($attribute)
+                    $connectionName = $attribute;
+            }
+        }
+
+        $conf = Config::getAll('database');
+        if (!isset($conf[$connectionName]))
+            throw new IllegalArgumentException('Unknown database connection name: ' . $connectionName);
+
+        $bp->build(new Connection($conf[$connectionName]));
     }
 }
