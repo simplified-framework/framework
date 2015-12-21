@@ -60,9 +60,6 @@ class Migrate extends Command {
             $migrations->build($conn);
         }
 
-        // TODO check files in database table migrations
-        // TODO if already migrated, remove from array
-
         $files = array();
         if ($handle = opendir($migrations_path)) {
             while (false !== ($entry = readdir($handle))) {
