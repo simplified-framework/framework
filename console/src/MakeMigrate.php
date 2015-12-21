@@ -37,7 +37,7 @@ class MakeMigrate extends Command {
         $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$script.php";
         $output->writeln('creating script ' . $file);
 
-        $table = Inflector::camelize($table);
+        $table = Inflector::ucwords($table);
         $fp = fopen($file, "w");
         fwrite($fp, '<?php ' . PHP_EOL . "class {$table} {"
             . PHP_EOL
