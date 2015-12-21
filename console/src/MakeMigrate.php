@@ -37,13 +37,14 @@ class MakeMigrate extends Command {
         $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$script.php";
         $output->writeln('creating script ' . $file);
 
-        $table = Inflector::ucwords($table);
+        $table = strtolower($table);
+        $className = Inflector::ucwords($table);
         $fp = fopen($file, "w");
-        fwrite($fp, '<?php ' . PHP_EOL . PHP_EOL . "class {$table} {"
+        fwrite($fp, '<?php ' . PHP_EOL . PHP_EOL . "class {$className} {"
             . PHP_EOL
             . "\tpublic function up() {"
             . PHP_EOL
-            . "\t\tSchema::create('$table', function() {"
+            . "\t\t".'Schema::create("'.$table.'", function(BluePrint $bp) {'
             . PHP_EOL
             . "\t\t});"
             . PHP_EOL
@@ -52,7 +53,8 @@ class MakeMigrate extends Command {
             . PHP_EOL
             . "\tpublic function down() {"
             . PHP_EOL
-            . "\t}" . PHP_EOL . "}"
+            . "\t\t".'Schema::drop("'.$table.'");'
+            . "\t}" . PHP_EOL . "}" . PHP_EOL
         );
         fclose($fp);
     }
