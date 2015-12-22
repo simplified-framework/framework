@@ -74,8 +74,16 @@ class Model {
     }
 
     public static function where ($field, $condition, $value) {
-        $class = get_called_class();
-        return $class::all()->where($field, $condition, $value);
+        $model_class = get_called_class();
+        $instance = new $model_class();
+        $table_name = $instance->getTable();
+
+        // TODO check connection for model instance
+        $driver = new Builder();
+
+        // TODO check return value from PDO
+        // TODO check clause against SQL injection!
+        return $driver->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetch();
     }
 /*
     public function hasMany($modelClass, $foreignKey = null) {
