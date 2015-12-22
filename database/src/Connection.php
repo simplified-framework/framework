@@ -18,11 +18,6 @@ class Connection implements ConnectionInterface {
         }
     }
 
-    public function __debugInfo()
-    {
-        return array();
-    }
-
     public function getDatabaseSchema() {
         return $this->schema;
     }
@@ -101,44 +96,8 @@ class Connection implements ConnectionInterface {
         return $stmt;
     }
 
-    public function select($query, array $bindings = array()) {
-        if (stristr($query, "select ") !== 0)
-            throw new IllegalArgumentException("Query isnt a valid select statement (" . $query . ")");
-
-        if ($this->isConnected()) {
-
-        }
-    }
-
-    public function insert($query, array $bindings = array()) {
-        if (stristr($query, "insert into") !== 0)
-            throw new IllegalArgumentException("Query isn't a valid insert statement (" . $query . ")");
-
-        if ($this->isConnected()) {
-
-        }
-    }
-
-    public function update($query, array $bindings = array()) {
-        if (stristr($query, "update ") !== 0)
-            throw new IllegalArgumentException("Query isn't a valid update statement (" . $query . ")");
-
-        if ($this->isConnected()) {
-
-        }
-    }
-
-    public function delete($query, array $bindings = array()) {
-        if (stristr($query, "delete from ") !== 0)
-            throw new IllegalArgumentException("Query isn't a valid delete statement (" . $query . ")");
-
-        if ($this->isConnected()) {
-
-        }
-    }
-
     public function quote($value) {
-        return $this->_conn->quote($value);
+        return $this->isConnected() ? $this->_conn->quote($value) : $value;
     }
 
     public function getStructure() {
@@ -146,14 +105,14 @@ class Connection implements ConnectionInterface {
     }
 
     public function prepare($query) {
-        return $this->_conn->prepare($query);
+        return $this->isConnected() ? $this->_conn->prepare($query) : null;
     }
 
     public function getAttribute($attrs) {
-        return $this->_conn->getAttribute($attrs);
+        return $this->isConnected() ? $this->_conn->getAttribute($attrs) : null;
     }
 
     public function lastInsertId() {
-        return $this->_conn->lastInsertId();
+        return $this->isConnected() ? $this->_conn->lastInsertId() : -1;
     }
 }

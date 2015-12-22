@@ -7,7 +7,7 @@ use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
 
 class Model {
-    private $attributes = null;
+    private $attributes = array();
 
     // override connection name
 	static  $connection;
