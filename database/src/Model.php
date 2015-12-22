@@ -77,7 +77,7 @@ class Model {
     public static function all() {
         $model_class = get_called_class();
         $instance = new $model_class();
-        $table = $instance->getTable()->name();
+        //$table = $instance->getTable()->name();
 
         $model_class = get_called_class();
         $ref = new ReflectionProperty($model_class, 'table');
