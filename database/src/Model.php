@@ -7,7 +7,6 @@ use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
 
 class Model {
-	private $builder = null;
     private $attributes = null;
 
     // override connection name
@@ -138,6 +137,16 @@ class Model {
         // TODO who can save this record?
     }
     */
+
+    public function __debugInfo()
+    {
+        $debug = array();
+        foreach ($this->attributes as $key => $val) {
+            $debug[$key] = $val;
+        }
+
+        return $debug;
+    }
 
     public function __get($name) {
         if (isset($this->attributes[$name])) {
