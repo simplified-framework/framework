@@ -19,7 +19,7 @@ class Model {
 	public function __construct($attributes = null) {
         if ($attributes)
             $this->attributes = $attributes;
-        $this->init();
+        //$this->init();
     }
     
     public function __destruct() {
@@ -81,7 +81,7 @@ class Model {
 
         $driver = new Builder();
         // TODO check return value from PDO
-        return $driver->select($table)->execute()->fetchAll();
+        return $driver->select($table)->asObject($class)->execute()->fetchAll();
     }
 
     public static function find($id) {
