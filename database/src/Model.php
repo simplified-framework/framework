@@ -1,11 +1,8 @@
 <?php
 
-namespace Simplified\Orm;
+namespace Simplified\Database;
 
 use Simplified\Config\Config;
-use Simplified\DBAL\Connection;
-use Simplified\DBAL\ConnectionException;
-use Simplified\DBAL\ModelException;
 use ReflectionProperty;
 
 class Model {

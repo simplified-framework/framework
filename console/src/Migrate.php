@@ -10,9 +10,9 @@ namespace Simplified\Console;
 
 use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
-use Simplified\DBAL\Connection;
-use Simplified\DBAL\ConnectionException;
-use Simplified\DBAL\Schema\Blueprint;
+use Simplified\Database\Connection;
+use Simplified\Database\ConnectionException;
+use Simplified\Database\Schema\Blueprint;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

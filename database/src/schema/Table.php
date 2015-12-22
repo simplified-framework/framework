@@ -6,10 +6,10 @@
  * Time: 15:55
  */
 
-namespace Simplified\DBAL\Schema;
+namespace Simplified\Database\Schema;
 
 use Simplified\Core\Collection;
-use Simplified\DBAL\Connection;
+use Simplified\Database\Connection;
 
 class Table {
     private $name;

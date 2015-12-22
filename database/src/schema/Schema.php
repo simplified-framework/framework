@@ -6,13 +6,13 @@
  * Time: 16:03
  */
 
-namespace Simplified\DBAL\Schema;
+namespace Simplified\Database\Schema;
 
 use Simplified\Config\Config;
 use Simplified\Core\Collection;
 use Simplified\Core\IllegalArgumentException;
-use Simplified\DBAL\Connection;
-use Simplified\DBAL\DriverException;
+use Simplified\Database\Connection;
+use Simplified\Database\DriverException;
 
 class Schema {
     private $driver;

@@ -6,9 +6,9 @@
  * Time: 10:16
  */
 
-namespace Simplified\DBAL\Schema;
+namespace Simplified\Database\Schema;
 
-use Simplified\DBAL\Connection;
+use Simplified\Database\Connection;
 
 function tick($value) {
     if (!is_numeric($value)) {

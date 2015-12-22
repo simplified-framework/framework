@@ -1,9 +1,9 @@
 <?php
 
-namespace Simplified\DBAL;
+namespace Simplified\Database;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Core\NullPointerException;
-use Simplified\DBAL\Schema\Schema;
+use Simplified\Database\Schema\Schema;
 
 class Connection implements ConnectionInterface {
     private $_conn;

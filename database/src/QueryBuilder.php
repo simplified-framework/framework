@@ -1,6 +1,6 @@
 <?php
 
-namespace Simplified\Orm;
+namespace Simplified\Database;
 use Simplified\Core\Collection;
 
 class Query {

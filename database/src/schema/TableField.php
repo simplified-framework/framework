@@ -6,7 +6,7 @@
  * Time: 15:09
  */
 
-namespace Simplified\DBAL\Schema;
+namespace Simplified\Database\Schema;
 
 
 class TableField {

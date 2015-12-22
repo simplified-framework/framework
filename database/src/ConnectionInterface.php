@@ -1,6 +1,6 @@
 <?php
 
-namespace Simplified\DBAL;
+namespace Simplified\Database;
 
 interface ConnectionInterface {
     // connection data

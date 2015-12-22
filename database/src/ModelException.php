@@ -6,12 +6,12 @@
  * and open the template in the editor.
  */
 
-namespace Simplified\DBAL;
+namespace Simplified\Database;
 
 /**
  * Description of ConnectionException
  *
  * @author bratfisch
  */
-class ConnectionException extends \Exception{
+class ModelException extends \Exception{
 }
