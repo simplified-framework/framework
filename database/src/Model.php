@@ -23,7 +23,7 @@ class Model {
     }
     
     public function __destruct() {
-        if ($this->builder->getDriver() != null)
+        if ($this->builder != null && $this->builder->getDriver() != null)
             $this->builder->getDriver()->close();
     }
 
