@@ -2,7 +2,6 @@
 
 namespace Simplified\Database;
 
-use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
@@ -10,62 +9,19 @@ use ReflectionProperty;
 class Model {
 	private $builder = null;
     private $attributes = null;
-    private $metadata;
-    static  $hasMany;
-	static  $connection;
-    static  $primaryKey;
-    static  $table;
-    static  $instance;
 
-    public function __set($name, $value) {
-        if (!isset($this->$name)) {
-            $this->attributes[$name] = $value;
-        } else {
-            $this->$name = $value;
-        }
-    }
+    // override connection name
+	static  $connection;
+
+    // override primary key
+    static  $primaryKey;
+
+    // override table name
+    static  $table;
 
 	public function __construct($attributes = null) {
-        if ($attributes)
+        if (is_array($attributes))
             $this->attributes = $attributes;
-        //$this->init();
-    }
-    
-    public function __destruct() {
-        if ($this->builder != null && $this->builder->getDriver() != null)
-            $this->builder->getDriver()->close();
-    }
-
-    private function init() {
-		$config = Config::getAll('database');
-		if (empty($config) || count($config) == 0) {
-			throw new ConnectionException('No database configuration found');
-		}
-
-        $ref = new ReflectionProperty(get_called_class(), 'connection');
-        $connection = $ref->getValue($this);
-		if (null == $connection) {
-			$connection = "default";
-		}
-		
-		if (!isset($config[$connection])) {
-			throw new ConnectionException('No database configuration named "' . $connection . '" found');
-		}
-
-        $model_class = get_called_class();
-        $ref = new ReflectionProperty($model_class, 'table');
-        $table_name = $ref->getValue($this);
-        if (!$table_name) {
-            $table_name = strtolower(basename($model_class));
-        }
-
-        $connection = new Connection($config[$connection]);
-        $this->builder = new Builder($connection);
-        $this->metadata = $connection->getDatabaseSchema()->table($table_name);
-
-        if (!$this->metadata) {
-            throw new ModelException('Unknown table for Model '.get_called_class().' in database schema');
-        }
     }
 	
 	public function getTable() {
@@ -105,6 +61,7 @@ class Model {
     public static function find($id) {
         if (!is_numeric($id))
             throw new IllegalArgumentException("Argument must be numeric");
+
         $model_class = get_called_class();
         $instance = new $model_class();
         $table_name = $instance->getTable();
@@ -120,30 +77,7 @@ class Model {
         $class = get_called_class();
         return $class::all()->where($field, $condition, $value);
     }
-
 /*
-    public function __get($name) {
-        if (in_array($name, $this->getFieldNames()->toArray())) {
-            if ($this->getProperty($name))
-                return $this->getProperty($name);
-        }
-        else
-            if (method_exists($this, $name) && !($this->getProperty($name))) {
-                $data = call_user_func(array($this, $name));
-                if (get_class($data) == "Simplified\\Core\\Collection")
-                    $data = $data->toArray();
-
-                $this->$name = $data;
-                return $data;
-            }
-            else
-                if ($this->getProperty($name)) {
-                    return $this->getProperty($name);
-                }
-
-        return null;
-    }
-
     public function hasMany($modelClass, $foreignKey = null) {
         $trace = debug_backtrace();
         $caller = $trace[1];
@@ -188,37 +122,6 @@ class Model {
         }
     }
 
-    public function __get($name) {
-        if (in_array($name, $this->getFieldNames()->toArray())) {
-            if ($this->getProperty($name))
-                return $this->getProperty($name);
-        }
-        else
-        if (method_exists($this, $name) && !($this->getProperty($name))) {
-            $data = call_user_func(array($this, $name));
-            if (get_class($data) == "Simplified\\Core\\Collection")
-                $data = $data->toArray();
-
-            $this->$name = $data;
-            return $data;
-        }
-        else
-        if ($this->getProperty($name)) {
-            return $this->getProperty($name);
-        }
-
-        return null;
-    }
-
-    public function __set($key, $val) {
-        $this->$key = $val;
-    }
-
-    public static function where ($field, $condition, $value) {
-        $class = get_called_class();
-        return $class::all()->where($field, $condition, $value);
-    }
-
     public function delete() {
         // TODO who can delete this record?
     }
@@ -227,5 +130,22 @@ class Model {
         // TODO who can save this record?
     }
     */
+
+    public function __get($name) {
+        if (isset($this->attributes[$name])) {
+            return $this->attributes[$name];
+        }
+
+        if (isset($this->$name))
+            return $this->$name;
+    }
+
+    public function __set($name, $value) {
+        if (!isset($this->$name)) {
+            $this->attributes[$name] = $value;
+        } else {
+            $this->$name = $value;
+        }
+    }
 }
 
