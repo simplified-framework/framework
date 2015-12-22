@@ -56,7 +56,7 @@ class Model {
         $this->metadata = $this->driver->getDatabaseSchema()->table($table_name);
 
         if (!$this->metadata) {
-            throw new ModelException('Unknown table ' . $this->getTable()->name() . ' in database schema');
+            throw new ModelException('Unknown table for Model '.get_called_class().' in database schema');
         }
     }
 	
