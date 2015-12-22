@@ -77,7 +77,6 @@ class Model {
     public static function all() {
         $model_class = get_called_class();
         $instance = new $model_class();
-        //$table = $instance->getTable()->name();
 
         $model_class = get_called_class();
         $ref = new ReflectionProperty($model_class, 'table');
@@ -86,19 +85,29 @@ class Model {
             $table_name = strtolower(basename($model_class));
         }
 
+        // TODO check connection for model instance
         $driver = new Builder();
+
         // TODO check return value from PDO
         return $driver->select($table_name)->asObject($model_class)->execute()->fetchAll();
     }
 
     public static function find($id) {
-        $class = get_called_class();
-        $instance = new $class();
-        $table = $instance->getTable()->name();
+        $model_class = get_called_class();
+        $instance = new $model_class();
 
+        $model_class = get_called_class();
+        $ref = new ReflectionProperty($model_class, 'table');
+        $table_name = $ref->getValue($instance);
+        if (!$table_name) {
+            $table_name = strtolower(basename($model_class));
+        }
+
+        // TODO check connection for model instance
         $driver = new Builder();
+
         // TODO check return value from PDO
-        return $driver->select($table)->where('id', array($id))->asObject($class)->execute()->fetch();
+        return $driver->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->execute()->fetch();
     }
 
     public static function where ($field, $condition, $value) {
