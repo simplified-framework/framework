@@ -16,7 +16,15 @@ class Model {
     static  $primaryKey;
     static  $table;
     static  $instance;
-	
+
+    public function __set($name, $value) {
+        if (!isset($this->$name)) {
+            $this->attributes[$name] = $value;
+        } else {
+            $this->$name = $value;
+        }
+    }
+
 	public function __construct($attributes = null) {
         if ($attributes)
             $this->attributes = $attributes;
