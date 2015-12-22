@@ -83,7 +83,7 @@ class Model {
 
         // TODO check return value from PDO
         // TODO check clause against SQL injection!
-        return $driver->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetch();
+        return $driver->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetchAll();
     }
 /*
     public function hasMany($modelClass, $foreignKey = null) {
