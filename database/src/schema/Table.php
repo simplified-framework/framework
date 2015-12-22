@@ -23,7 +23,7 @@ class Table {
                 $stmt = $driver->raw('DESC ' . $name);
                 if ($stmt != null) {
                     if ($stmt->execute()) {
-                        $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\DBAL\\Schema\\TableField');
+                        $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\Database\\Schema\\TableField');
                         while ($record = $stmt->fetch()) {
                             $this->fields[$record->field] = $record;
                         }
