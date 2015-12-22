@@ -1,7 +1,6 @@
 {
     "name": "simplified/framework",
     "description": "Simplified framework module",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Andreas Bratfisch",
