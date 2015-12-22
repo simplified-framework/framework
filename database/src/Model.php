@@ -81,7 +81,7 @@ class Model {
 
         $driver = new Builder();
         // TODO check return value from PDO
-        return $driver->select($table)->asObject($class)->execute()->fetchAll();
+        return $driver->select($table)->execute()->fetchAll();
     }
 
     public static function find($id) {
