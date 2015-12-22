@@ -10,6 +10,7 @@ namespace Simplified\Database\Schema;
 
 use Simplified\Core\Collection;
 use Simplified\Database\Connection;
+use Simplified\Database\DriverException;
 
 class Table {
     private $name;
@@ -20,11 +21,17 @@ class Table {
         $this->fields = new Collection();
         if ($driver->isConnected()) {
             try {
-                $stmt = $driver->raw('DESC ' . $name);
+                if ($driver->getDriverName() == "sqlite")
+                    $stmt = $driver->raw("SELECT sql FROM sqlite_master WHERE name='$name'");
+                else
+                    $stmt = $driver->raw('DESC ' . $name);
+
                 if ($stmt != null) {
                     if ($stmt->execute()) {
                         $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Simplified\\Database\\Schema\\TableField');
                         while ($record = $stmt->fetch()) {
+                            if ($name == "user_groups")
+                                var_dump($record);
                             $this->fields[$record->field] = $record;
                         }
                     }

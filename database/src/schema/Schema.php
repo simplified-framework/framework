@@ -26,7 +26,11 @@ class Schema {
         $this->schema = new Collection();
         if ($this->driver->isConnected()) {
             try {
-                $stmt = $this->driver->raw('SHOW TABLES');
+                if ($this->driver->getDriverName() == "sqlite")
+                    $stmt = $this->driver->raw("SELECT name FROM sqlite_master WHERE type='table'");
+                else
+                    $stmt = $this->driver->raw('SHOW TABLES');
+
                 if ($stmt != null) {
                     if ($stmt->execute()) {
                         $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);

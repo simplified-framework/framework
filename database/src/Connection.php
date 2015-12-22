@@ -18,15 +18,32 @@ class Connection implements ConnectionInterface {
         }
     }
 
+    public function __debugInfo()
+    {
+        return array();
+    }
+
     public function getDatabaseSchema() {
         return $this->schema;
     }
 
     public function connect() {
-        $dsn = $this->getDriverName() . ":host=".$this->getHost().";dbname=".$this->getDatabase().';charset=utf8';
+        $dsn = null;
+        if ($this->getDriverName() == "sqlite") {
+            if (empty($this->getPath()))
+                throw  new ConnectionException("Unable to connect to sqlite: path is empty");
+            $dsn = $this->getDriverName() . ":" . STORAGE_PATH . $this->getPath();
+            if (!is_dir(dirname(STORAGE_PATH . $this->getPath()))) {
+                mkdir( dirname(STORAGE_PATH . $this->getPath()), 0775, true );
+            }
+        } else {
+            $dsn = $this->getDriverName() . ":host=".$this->getHost().";dbname=".$this->getDatabase().';charset=utf8;';
+        }
+
         try {
             $this->_conn = new \PDO($dsn, $this->getUsername(), $this->getPassword(),
                 array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
+
         } catch (\PDOException $e) {
             throw  new ConnectionException($e->getMessage() . ", " . $dsn);
         }
@@ -46,6 +63,10 @@ class Connection implements ConnectionInterface {
 
     public function isConnected() {
         return $this->_conn == null ? false : true;
+    }
+
+    public function getPath() {
+        return isset($this->_params['path']) ? $this->_params['path'] : "";
     }
     
     public function getHost() {
@@ -114,5 +135,25 @@ class Connection implements ConnectionInterface {
         if ($this->isConnected()) {
 
         }
+    }
+
+    public function quote($value) {
+        return $this->_conn->quote($value);
+    }
+
+    public function getStructure() {
+        return $this->structure;
+    }
+
+    public function prepare($query) {
+        return $this->_conn->prepare($query);
+    }
+
+    public function getAttribute($attrs) {
+        return $this->_conn->getAttribute($attrs);
+    }
+
+    public function lastInsertId() {
+        return $this->_conn->lastInsertId();
     }
 }

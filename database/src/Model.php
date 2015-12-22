@@ -3,10 +3,11 @@
 namespace Simplified\Database;
 
 use Simplified\Config\Config;
+use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
 
 class Model {
-	private $driver = null;
+	private $builder = null;
     private $attributes = null;
     private $metadata;
     static  $hasMany;
@@ -22,8 +23,8 @@ class Model {
     }
     
     public function __destruct() {
-        if ($this->driver != null)
-            $this->driver->close();
+        if ($this->builder->getDriver() != null)
+            $this->builder->getDriver()->close();
     }
 
     private function init() {
@@ -49,8 +50,9 @@ class Model {
             $table_name = strtolower(basename($model_class));
         }
 
-        $this->driver = new Connection($config[$connection]);
-        $this->metadata = $this->driver->getDatabaseSchema()->table($table_name);
+        $connection = new Connection($config[$connection]);
+        $this->builder = new Builder($connection);
+        $this->metadata = $connection->getDatabaseSchema()->table($table_name);
 
         if (!$this->metadata) {
             throw new ModelException('Unknown table for Model '.get_called_class().' in database schema');
@@ -72,20 +74,52 @@ class Model {
         return 'id';
     }
 
-    /*
-	public static function all() {
+    public static function all() {
         $class = get_called_class();
         $instance = new $class();
-        $query = new Query($instance);
-        return $query->select("*")->from($instance->getTable())->get();
-	}
-    
+        $table = $instance->getTable()->name();
+
+        $driver = new Builder();
+        // TODO check return value from PDO
+        return $driver->select($table)->asObject($class)->execute()->fetchAll();
+    }
+
     public static function find($id) {
-        $class = get_called_class();        
+        $class = get_called_class();
         $instance = new $class();
-        $pk = $instance->getTable() . "." . $instance->getPrimaryKey();
-        $query = new Query($instance);
-        return $query->select("*")->from($instance->getTable())->where($pk, "=", intval($id))->get();
+        $table = $instance->getTable()->name();
+
+        $driver = new Builder();
+        // TODO check return value from PDO
+        return $driver->select($table)->where('id', array($id))->asObject($class)->execute()->fetch();
+    }
+
+    public static function where ($field, $condition, $value) {
+        $class = get_called_class();
+        return $class::all()->where($field, $condition, $value);
+    }
+
+/*
+    public function __get($name) {
+        if (in_array($name, $this->getFieldNames()->toArray())) {
+            if ($this->getProperty($name))
+                return $this->getProperty($name);
+        }
+        else
+            if (method_exists($this, $name) && !($this->getProperty($name))) {
+                $data = call_user_func(array($this, $name));
+                if (get_class($data) == "Simplified\\Core\\Collection")
+                    $data = $data->toArray();
+
+                $this->$name = $data;
+                return $data;
+            }
+            else
+                if ($this->getProperty($name)) {
+                    return $this->getProperty($name);
+                }
+
+        return null;
     }
 
     public function hasMany($modelClass, $foreignKey = null) {

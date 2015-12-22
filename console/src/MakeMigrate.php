@@ -8,6 +8,7 @@
 
 namespace Simplified\Console;
 
+use Simplified\Core\IllegalArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,7 @@ class MakeMigrate extends Command {
         $this
             ->setName('make:migrate')
             ->setDescription('migrate database (create script)')
-            ->addArgument('script_name', InputArgument::REQUIRED, 'script name')
+            ->addArgument('name', InputArgument::REQUIRED, 'name')
             ->addOption('table', 't', InputOption::VALUE_REQUIRED)
         ;
     }
@@ -32,8 +33,11 @@ class MakeMigrate extends Command {
             mkdir($migrations_path, 0775, true);
         }
 
-        $script = $input->getArgument('script_name');
+        $script = $input->getArgument('name');
         $table  = $input->getOption('table');
+        if (empty($table))
+            throw new IllegalArgumentException('Not enough arguments (missing: [-t|--table])');
+
         $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$script.php";
         $output->writeln('creating script ' . $file);
 
@@ -43,9 +47,9 @@ class MakeMigrate extends Command {
         fwrite($fp, '<?php '
             . PHP_EOL
             . PHP_EOL
-            . "use Simplified\\DBAL\\Schema\\Schema;"
+            . "use Simplified\\Database\\Schema\\Schema;"
             . PHP_EOL
-            . "use Simplified\\DBAL\\Schema\\Blueprint;"
+            . "use Simplified\\Database\\Schema\\Blueprint;"
             . PHP_EOL
             . "use Simplified\\Console\\MigrateInterface;"
             . PHP_EOL
