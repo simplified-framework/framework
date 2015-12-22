@@ -75,13 +75,20 @@ class Model {
     }
 
     public static function all() {
-        $class = get_called_class();
-        $instance = new $class();
+        $model_class = get_called_class();
+        $instance = new $model_class();
         $table = $instance->getTable()->name();
+
+        $model_class = get_called_class();
+        $ref = new ReflectionProperty($model_class, 'table');
+        $table_name = $ref->getValue($instance);
+        if (!$table_name) {
+            $table_name = strtolower(basename($model_class));
+        }
 
         $driver = new Builder();
         // TODO check return value from PDO
-        return $driver->select($table)->asObject($class)->execute()->fetchAll();
+        return $driver->select($table_name)->asObject($model_class)->execute()->fetchAll();
     }
 
     public static function find($id) {
