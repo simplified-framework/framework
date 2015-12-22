@@ -17,7 +17,7 @@
 		  "Simplified\\Config\\":"config/src/",
 		  "Simplified\\Debug\\":"debug/src/",
 		  "Simplified\\Core\\":"core/src/",
-		  "Simplified\\DBAL\\":"dbal/src/",
+		  "Simplified\\Database\\":"database/src/",
 		  "Simplified\\Http\\":"http/src/",
 		  "Simplified\\Orm\\":"orm/src/",
           "Simplified\\Session\\":"session/src/",
