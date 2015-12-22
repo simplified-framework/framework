@@ -3,6 +3,7 @@
 namespace Simplified\Database;
 
 use Simplified\Config\Config;
+use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
 
@@ -60,12 +61,19 @@ class Model {
     }
 	
 	public function getTable() {
-        return $this->metadata;
+        $model_class = get_called_class();
+        $ref = new ReflectionProperty($model_class, 'table');
+        $table_name = $ref->getValue($this);
+        if (!$table_name) {
+            $table_name = strtolower(basename($model_class));
+        }
+
+        return $table_name;
 	}
 
     public function getPrimaryKey() {
-        $class = get_called_class();
-        $ref = new ReflectionProperty($class, 'primaryKey');
+        $model_class = get_called_class();
+        $ref = new ReflectionProperty($model_class, 'primaryKey');
         $key = $ref->getValue($this);
         if (null != $key) {
             return $key;
@@ -77,13 +85,7 @@ class Model {
     public static function all() {
         $model_class = get_called_class();
         $instance = new $model_class();
-
-        $model_class = get_called_class();
-        $ref = new ReflectionProperty($model_class, 'table');
-        $table_name = $ref->getValue($instance);
-        if (!$table_name) {
-            $table_name = strtolower(basename($model_class));
-        }
+        $table_name = $instance->getTable();
 
         // TODO check connection for model instance
         $driver = new Builder();
@@ -93,15 +95,11 @@ class Model {
     }
 
     public static function find($id) {
+        if (!is_numeric($id))
+            throw new IllegalArgumentException("Argument must be numeric");
         $model_class = get_called_class();
         $instance = new $model_class();
-
-        $model_class = get_called_class();
-        $ref = new ReflectionProperty($model_class, 'table');
-        $table_name = $ref->getValue($instance);
-        if (!$table_name) {
-            $table_name = strtolower(basename($model_class));
-        }
+        $table_name = $instance->getTable();
 
         // TODO check connection for model instance
         $driver = new Builder();
