@@ -47,4 +47,8 @@ class Statement {
                 break;
         }
     }
+
+    public function type() {
+        return $this->type;
+    }
 }
