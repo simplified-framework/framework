@@ -138,16 +138,6 @@ class Model {
     }
     */
 
-    public function __debugInfo()
-    {
-        $debug = array();
-        foreach ($this->attributes as $key => $val) {
-            $debug[$key] = $val;
-        }
-
-        return $debug;
-    }
-
     public function __get($name) {
         if (isset($this->attributes[$name])) {
             return $this->attributes[$name];
