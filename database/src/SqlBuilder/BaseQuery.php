@@ -37,7 +37,8 @@ class BaseQuery {
             throw new ModelException("Unable to compile statement");
 
         $query  = $this->statement->compile();
-        $query .= implode("AND ", $this->andWhere);
+        if (count($this->andWhere) > 0)
+            $query .= " WHERE " . implode("AND ", $this->andWhere);
         return $query;
     }
 }
