@@ -9,10 +9,12 @@
 namespace Simplified\Database\SqlBuilder;
 
 
+use Simplified\Database\Connection;
+
 class SelectQuery extends BaseQuery {
     private $from;
-    public function __construct($from, Builder $builder) {
-        parent::__construct($builder);
+    public function __construct($from, Connection $connection) {
+        parent::__construct($connection);
         $this->from = $from;
     }
 

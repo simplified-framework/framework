@@ -9,9 +9,11 @@
 namespace Simplified\Database\SqlBuilder;
 
 
+use Simplified\Database\Connection;
+
 class BaseQuery {
-    private $builder;
-    public function __construct(Builder $builder) {
-        $this->builder = $builder;
+    private $connection;
+    public function __construct(Connection $connection) {
+        $this->connection = $connection;
     }
 }
