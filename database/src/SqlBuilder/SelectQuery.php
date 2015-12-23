@@ -11,12 +11,12 @@ class SelectQuery extends BaseQuery {
             throw new IllegalArgumentException("No table name specified");
 
         parent::__construct();
-        $this->statement = new Statement(Statement::SELECT, $from);
+        $this->setStatement(new Statement(Statement::SELECT, $from));
     }
 
     public function get() {
-        $stmt = $this->statement->compile();
-        print $stmt;
+        $query = $this->getQuery();
+        print $query;
         return null;
     }
 }
