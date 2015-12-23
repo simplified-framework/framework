@@ -14,7 +14,7 @@ class SelectQuery extends BaseQuery {
         $this->statement = new Statement(Statement::SELECT, $from);
     }
 
-    public function execute() {
+    public function get() {
         $stmt = $this->statement->compile();
         print $stmt;
         return null;
