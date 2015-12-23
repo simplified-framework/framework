@@ -65,7 +65,7 @@ class Model {
 
         $builder = $instance->getBuilder($instance);
         // TODO check return value from PDO
-        return $builder->select($table_name)->asObject($model_class)->execute()->fetchAll();
+        return $builder->select($table_name)->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 
     public static function find($id) {
@@ -78,7 +78,7 @@ class Model {
 
         $builder = $instance->getBuilder($instance);
         // TODO check return value from PDO
-        return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->execute()->fetch();
+        return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->fetch();//->execute()->fetch();
     }
 
     public static function where ($field, $condition, $value) {
@@ -89,7 +89,7 @@ class Model {
         $builder = $instance->getBuilder($instance);
         // TODO check return value from PDO
         // TODO check clause against SQL injection!
-        return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetchAll();
+        return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 /*
     public function hasMany($modelClass, $foreignKey = null) {
