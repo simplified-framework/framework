@@ -5,8 +5,8 @@ namespace Simplified\Database;
 use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\SqlBuilder\Builder;
+//use Simplified\Database\SqlBuilder\Structure;
 use ReflectionProperty;
-use Simplified\Database\SqlBuilder\Structure;
 
 class Model {
     private $attributes = array();
@@ -65,9 +65,10 @@ class Model {
 
         $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $builder->select($table_name)->asObject($model_class)->fetchAll();//->execute()->fetchAll();
+        return $builder->select($table_name);//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 
+    /*
     public static function find($id) {
         if (!is_numeric($id))
             throw new IllegalArgumentException("Argument must be numeric");
@@ -78,7 +79,7 @@ class Model {
 
         $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->fetch();//->execute()->fetch();
+        //return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->fetch();//->execute()->fetch();
     }
 
     public static function where ($field, $condition, $value) {
@@ -89,9 +90,9 @@ class Model {
         $builder = $instance->getBuilder();
         // TODO check return value from PDO
         // TODO check clause against SQL injection!
-        return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->fetchAll();//->execute()->fetchAll();
+        //return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
-/*
+
     public function hasMany($modelClass, $foreignKey = null) {
         $trace = debug_backtrace();
         $caller = $trace[1];
@@ -168,7 +169,7 @@ class Model {
         if (empty($config))
             throw new ConnectionException('Unknown database connection: ' . $connectionName);
 
-        $builder = new Builder(new Connection($config), new Structure($this->getPrimaryKey()));
+        $builder = new Builder(new Connection($config));//, new Structure($this->getPrimaryKey()));
         return $builder;
     }
 }
