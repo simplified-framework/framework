@@ -38,7 +38,7 @@ class Statement {
             case Statement::SELECT:
                 $stmt = "SELECT ";
                 if (count($this->fields) == 0) {
-                    $stmt .= "* ";
+                    $stmt .= $this->table.".* ";
                 } else {
                     $stmt .= implode(",", $this->fields) . " ";
                 }
