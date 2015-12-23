@@ -63,7 +63,7 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder();
+        $builder = $instance->getBuilder($instance);
         // TODO check return value from PDO
         return $builder->select($table_name)->asObject($model_class)->execute()->fetchAll();
     }
@@ -76,7 +76,7 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder();
+        $builder = $instance->getBuilder($instance);
         // TODO check return value from PDO
         return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->execute()->fetch();
     }
@@ -86,7 +86,7 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder();
+        $builder = $instance->getBuilder($instance);
         // TODO check return value from PDO
         // TODO check clause against SQL injection!
         return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetchAll();
