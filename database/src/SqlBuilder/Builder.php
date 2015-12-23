@@ -17,7 +17,7 @@ class Builder {
     }
 
     public function select($table) {
-        $query = new SelectQuery($table, $this->connection);
+        $query = new SelectQuery($table);
         return $query;
     }
 }

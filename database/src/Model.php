@@ -65,7 +65,7 @@ class Model {
 
         $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $builder->select($table_name);//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
+        return $builder->select($table_name)->execute();//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 
     /*
