@@ -63,7 +63,7 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder($instance);
+        $builder = $instance->getBuilder();
         // TODO check return value from PDO
         return $builder->select($table_name)->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
@@ -76,7 +76,7 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder($instance);
+        $builder = $instance->getBuilder();
         // TODO check return value from PDO
         return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->fetch();//->execute()->fetch();
     }
@@ -86,7 +86,7 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder($instance);
+        $builder = $instance->getBuilder();
         // TODO check return value from PDO
         // TODO check clause against SQL injection!
         return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->fetchAll();//->execute()->fetchAll();
@@ -162,11 +162,13 @@ class Model {
         }
     }
 
-    private function getBuilder(Model $model) {
-        $config = Config::get('database', $model->getConnection());
+    private function getBuilder() {
+        $connectionName = $this->getConnection();
+        $config = Config::get('database', $connectionName);
         if (empty($config))
-            throw new ConnectionException('Unknown database connection: ' . $model->getConnection());
-        $builder = new Builder(new Connection($config), new Structure($model->getPrimaryKey()));
+            throw new ConnectionException('Unknown database connection: ' . $connectionName);
+
+        $builder = new Builder(new Connection($config), new Structure($this->getPrimaryKey()));
         return $builder;
     }
 }
