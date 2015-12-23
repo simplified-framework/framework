@@ -164,6 +164,8 @@ class Model {
 
     private function getBuilder(Model $model) {
         $config = Config::get('database', $model->getConnection());
+        if (empty($config))
+            throw new ConnectionException('Unknown database connection: ' . $model->getConnection());
         $builder = new Builder(new Connection($config), new Structure($model->getPrimaryKey()));
         return $builder;
     }
