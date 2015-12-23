@@ -2,9 +2,11 @@
 
 namespace Simplified\Database;
 
+use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
+use Simplified\Database\SqlBuilder\Structure;
 
 class Model {
     private $attributes = array();
@@ -45,16 +47,25 @@ class Model {
         return 'id';
     }
 
+    public function getConnection() {
+        $model_class = get_called_class();
+        $ref = new ReflectionProperty($model_class, 'connection');
+        $connection = $ref->getValue($this);
+        if (null != $connection) {
+            return $connection;
+        }
+
+        return 'default';
+    }
+
     public static function all() {
         $model_class = get_called_class();
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        // TODO check connection for model instance
-        $driver = new Builder();
-
+        $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $driver->select($table_name)->asObject($model_class)->execute()->fetchAll();
+        return $builder->select($table_name)->asObject($model_class)->execute()->fetchAll();
     }
 
     public static function find($id) {
@@ -65,11 +76,9 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        // TODO check connection for model instance
-        $driver = new Builder();
-
+        $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $driver->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->execute()->fetch();
+        return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->execute()->fetch();
     }
 
     public static function where ($field, $condition, $value) {
@@ -77,12 +86,10 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        // TODO check connection for model instance
-        $driver = new Builder();
-
+        $builder = $instance->getBuilder();
         // TODO check return value from PDO
         // TODO check clause against SQL injection!
-        return $driver->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetchAll();
+        return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->execute()->fetchAll();
     }
 /*
     public function hasMany($modelClass, $foreignKey = null) {
@@ -153,6 +160,12 @@ class Model {
         } else {
             $this->$name = $value;
         }
+    }
+
+    private function getBuilder(Model $model) {
+        $config = Config::get('database', $model->getConnection());
+        $builder = new Builder(new Connection($config), new Structure($model->getPrimaryKey()));
+        return $builder;
     }
 }
 
