@@ -3,9 +3,7 @@
 namespace Simplified\Database;
 
 use Simplified\Config\Config;
-use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\SqlBuilder\Builder;
-//use Simplified\Database\SqlBuilder\Structure;
 use ReflectionProperty;
 
 class Model {

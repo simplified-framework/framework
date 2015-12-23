@@ -2,16 +2,21 @@
 
 namespace Simplified\Database\SqlBuilder;
 
+use Simplified\Core\IllegalArgumentException;
+
 class SelectQuery extends BaseQuery {
-    private $from;
+    private $statement;
     public function __construct($from) {
+        if (!is_string($from) || is_null($from))
+            throw new IllegalArgumentException("No table name specified");
+
         parent::__construct();
-        $this->from = $from;
+        $this->statement = new Statement(Statement::SELECT, $from);
     }
 
     public function execute() {
-        $sql = "SELECT " . $this->from . ".* FROM " . $this->from;
-        print $sql;
+        $stmt = $this->statement->compile();
+        print $stmt;
         return null;
     }
 }
