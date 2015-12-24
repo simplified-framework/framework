@@ -23,6 +23,19 @@ class BaseQuery {
             case 2:
                 // support short hand where EQUAL clause: where("field", "value")
                 // support short hand where IN clause: where("field", array())
+                $field = func_get_arg(0);
+                $params = func_get_arg(1);
+                if (!is_string($field))
+                    throw new IllegalArgumentException("First argument must be string");
+
+                if (is_string($params) || is_numeric($params)) {
+                    $escaped = is_string($params) ? "'" . $params . "'" : $params;
+                    $this->andWhere[] = "$field = $escaped";
+                }
+                else
+                if (is_array($params)) {
+                    $this->andWhere[] = "$field IN (" . implode(",", $params) . ")";
+                }
                 break;
             case 3:
                 // support where clause with operator: where("field", "<,>,=,!=,NOT,IN,NOT IN", "value")
@@ -32,7 +45,7 @@ class BaseQuery {
                 $params = func_get_arg(2);
 
                 if (!WhereOperator::isValid($operator))
-                    throw new IllegalArgumentException("Operator '$operator' must on of '<,>,=,!=,NOT,IN,NOT IN'");
+                    throw new IllegalArgumentException("Operator '$operator' must on of '<,>,=,!=,NOT,IN,NOT IN,LIKE'");
 
                 if (!is_string($field) || !is_string($operator))
                     throw new IllegalArgumentException("First and second argument must be string");

@@ -17,6 +17,7 @@ class WhereOperator {
     const NOT = 'NOT';
     const IN = 'IN';
     const NOT_IN = 'NOT IN';
+    const LIKE = 'LIKE';
 
     public static function isValid($op) {
         switch ($op) {
@@ -27,6 +28,7 @@ class WhereOperator {
             case WhereOperator::NOT:
             case WhereOperator::IN:
             case WhereOperator::NOT_IN:
+            case WhereOperator::LIKE:
                 return true;
         }
         return false;
