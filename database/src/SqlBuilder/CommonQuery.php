@@ -10,7 +10,7 @@ namespace Simplified\Database\SqlBuilder;
 use Simplified\Database\Connection;
 use Simplified\Core\IllegalArgumentException;
 
-class CommonQuery {
+class CommonQuery extends BaseQuery{
     private $andWhere = array();
     private $joins = array();
 
