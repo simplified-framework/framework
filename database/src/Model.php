@@ -122,7 +122,7 @@ class Model {
         // TODO check if we need update or insert
         // TODO check with ID in attributes
         $pk = $instance->getPrimaryKey();
-        return (new UpdateQuery($table_name, $conn))->where($instance->getPrimaryKey(), $this->attributes[$pk])->execute();
+        (new UpdateQuery($table_name, $conn))->where($instance->getPrimaryKey(), $this->attributes[$pk])->execute();
     }
 
 /*

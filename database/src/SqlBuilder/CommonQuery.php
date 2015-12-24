@@ -118,20 +118,6 @@ class CommonQuery extends BaseQuery{
 
     public function getQuery() {
         $query = "";
-        if ($this->type == "SELECT") {
-            $query = "SELECT ";
-            if ($this->fields) {
-                if (is_array($this->fields)) {
-                    $query .= implode(",", $this->fields);
-                } else {
-                    $query .= $this->fields;
-                }
-            } else {
-                throw new SqlSyntaxException("No fields selected");
-            }
-            $query .= " FROM " . $this->table;
-        }
-
         if (count($this->joins) > 0)
             $query .= " " . implode(" ", $this->joins);
 
