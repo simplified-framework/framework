@@ -38,7 +38,7 @@ class SelectQuery extends CommonQuery {
             $result = $stmt->fetch();
             return $result;
         }
-        return false;
+        return null;
     }
 
     public function count() {
