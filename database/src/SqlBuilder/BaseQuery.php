@@ -28,7 +28,7 @@ class BaseQuery {
 
                 if (is_string($params) || is_numeric($params)) {
                     $escaped = is_string($params) ? "'" . $params . "'" : $params;
-                    $this->andWhere[] = "$field = $escaped";
+                    $this->andWhere[] = "$field=$escaped";
                 }
                 else
                 if (is_array($params)) {
@@ -101,7 +101,10 @@ class BaseQuery {
     }
 
     public function join($table, $primaryKey, $foreignKey) {
-        $this->joins[] = "LEFT JOIN $table ON $primaryKey = $foreignKey";
+        if (!is_string($table) || !is_string($primaryKey) || !is_string($foreignKey))
+            throw new IllegalArgumentException("Table, primary key and foreign key argument must be string");
+
+        $this->joins[] = "LEFT JOIN $table ON $primaryKey=$foreignKey";
         return $this;
     }
 
@@ -117,7 +120,9 @@ class BaseQuery {
             throw new ModelException("INSERT statements can't have a WHERE clause");
 
         $query  = $this->statement->compile();
-        $query .= implode(" ", $this->joins);
+
+        if (count($this->joins) > 0)
+            $query .= " " . implode(" ", $this->joins);
 
         if (count($this->andWhere) > 0)
             $query .= " WHERE " . implode(" AND ", $this->andWhere);
