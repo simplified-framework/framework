@@ -37,7 +37,7 @@ class Connection implements ConnectionInterface {
 
         try {
             $this->_conn = new \PDO($dsn, $this->getUsername(), $this->getPassword(),
-                array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
+                array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => false));
 
         } catch (\PDOException $e) {
             throw  new ConnectionException($e->getMessage() . ", " . $dsn);
