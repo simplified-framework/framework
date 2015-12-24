@@ -111,17 +111,7 @@ class BaseQuery {
         return $this;
     }
 
-    public function setStatement(Statement $stmt) {
-        $this->statement = $stmt;
-    }
-
     public function getQuery() {
-        if (empty($this->statement))
-            throw new ModelException("Unable to compile statement");
-
-        if ($this->statement->type() == Statement::INSERT && count($this->andWhere) > 0)
-            throw new ModelException("INSERT statements can't have a WHERE clause");
-
         $query = "";
         if ($this->type == "SELECT") {
             $query = "SELECT ";
