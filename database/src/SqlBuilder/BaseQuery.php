@@ -7,6 +7,7 @@ use Simplified\Database\ModelException;
 
 class BaseQuery {
     private $andWhere = array();
+    private $joins = array();
     private $statement;
 
     // TODO implement more args
@@ -99,6 +100,11 @@ class BaseQuery {
         return $this;
     }
 
+    public function join($table, $primaryKey, $foreignKey) {
+        $this->joins[] = "LEFT JOIN $table ON $primaryKey = $foreignKey";
+        return $this;
+    }
+
     public function setStatement(Statement $stmt) {
         $this->statement = $stmt;
     }
@@ -111,6 +117,8 @@ class BaseQuery {
             throw new ModelException("INSERT statements can't have a WHERE clause");
 
         $query  = $this->statement->compile();
+        $query .= implode(" ", $this->joins);
+
         if (count($this->andWhere) > 0)
             $query .= " WHERE " . implode(" AND ", $this->andWhere);
         return $query;
