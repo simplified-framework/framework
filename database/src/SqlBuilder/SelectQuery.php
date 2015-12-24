@@ -6,6 +6,8 @@ use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\Connection;
 
 class SelectQuery extends CommonQuery {
+    private $orderBy = array();
+
     public function __construct($from, Connection $conn) {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
@@ -21,10 +23,19 @@ class SelectQuery extends CommonQuery {
         return $this;
     }
 
+    public function orderBy($field, $direction = "ASC") {
+        $dir = strtoupper($direction) == "ASC" ? "ASC" : "DESC";
+        $this->orderBy[] = "ORDER BY $field $dir";
+        return $this;
+    }
+
     public function getQuery() {
         $fields = is_array($this->fields) ? implode(",", $this->fields) : $this->fields;
-        $query = "SELECT $fields FROM " . $this->table;
-        return $query . " " . parent::getQuery();
+        $query = "SELECT $fields FROM " . $this->table . " " . parent::getQuery();
+        if (count($this->orderBy) > 0) {
+            $query .= " " . implode(", ", $this->orderBy);
+        }
+        return $query;
     }
 
     public function get() {
