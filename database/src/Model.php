@@ -66,7 +66,9 @@ class Model {
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        return (new SelectQuery($table_name, $conn))->get();
+        return (new SelectQuery($table_name, $conn))
+            ->setObjectClassName($model_class)
+            ->get();
     }
 
     public static function find($id) {
@@ -81,7 +83,10 @@ class Model {
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        return (new SelectQuery($table_name, $conn))->where($instance->getPrimaryKey(), $id)->get();
+        return (new SelectQuery($table_name, $conn))
+            ->setObjectClassName($model_class)
+            ->where($instance->getPrimaryKey(), $id)
+            ->get();
     }
 
     public static function where ($field, $condition, $value) {
@@ -107,7 +112,9 @@ class Model {
         // TODO check if we have a ID in attributes
         // TODO iff not, do nothing
         $pk = $instance->getPrimaryKey();
-        return (new DeleteQuery($table_name, $conn))->where($instance->getPrimaryKey(), $this->attributes[$pk])->execute();
+        return (new DeleteQuery($table_name, $conn))
+            ->where($instance->getPrimaryKey(), $this->attributes[$pk])
+            ->execute();
     }
 
     public function save() {
@@ -123,7 +130,6 @@ class Model {
         // TODO check with ID in attributes
         $pk = $instance->getPrimaryKey();
         return (new UpdateQuery($table_name, $conn))
-            ->setObjectClassName($model_class)
             ->set($this->attributes)
             ->where($instance->getPrimaryKey(), $this->attributes[$pk])
             ->execute();
