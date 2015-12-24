@@ -63,7 +63,7 @@ class Model {
 
         $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $builder->select($table_name)->where("fieldName1 = XXX")->where("fieldName2 = ZZZ")->get();//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
+        return $builder->select($table_name)->where("fieldName1", "IN", array(1,2,3,4))->get();//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 
     /*
