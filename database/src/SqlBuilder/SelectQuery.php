@@ -22,7 +22,8 @@ class SelectQuery extends CommonQuery {
     }
 
     public function getQuery() {
-        $query = "SELECT ___FIELDS___ FROM " . $this->table;
+        $fields = is_array($this->fields) ? implode(",", $this->fields) : $this->fields;
+        $query = "SELECT $fields FROM " . $this->table;
         return $query . " " . parent::getQuery();
     }
 
