@@ -7,7 +7,7 @@
  */
 
 namespace Simplified\Database\SqlBuilder;
-
+use Simplified\Database\Connection;
 
 class DeleteQuery extends CommonQuery {
     public function __construct($table, Connection $connection) {
