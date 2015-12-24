@@ -3,7 +3,7 @@
 namespace Simplified\Database\SqlBuilder;
 
 use Simplified\Core\IllegalArgumentException;
-use Simplified\Database\ModelException;
+use Simplified\Database\Connection;
 
 class BaseQuery {
     private $andWhere = array();
@@ -12,6 +12,9 @@ class BaseQuery {
     protected $type;
     protected $table;
     protected $fields;
+
+    public function __construct(Connection $connection) {
+    }
 
     // TODO implement more args
     public function where() {

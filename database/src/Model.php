@@ -5,6 +5,7 @@ namespace Simplified\Database;
 use Simplified\Config\Config;
 use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
+use Simplified\Database\SqlBuilder\SelectQuery;
 
 class Model {
     private $attributes = array();
@@ -61,9 +62,12 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder();
-        // TODO check return value from PDO
-        return $builder->select($table_name)->join('table2', 'user.user_id', 'table2.user_id')->where("fieldName1", 1)->get();//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database', $connectionName, 'default');
+        $conn = new Connection($config);
+
+        return (new SelectQuery($table_name, $conn))->join('table2', 'user.user_id', 'table2.user_id')
+            ->where("fieldName1", 1)->get();
     }
 
     /*

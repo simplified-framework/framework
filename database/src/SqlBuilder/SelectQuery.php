@@ -3,12 +3,14 @@
 namespace Simplified\Database\SqlBuilder;
 
 use Simplified\Core\IllegalArgumentException;
+use Simplified\Database\Connection;
 
 class SelectQuery extends BaseQuery {
-    public function __construct($from) {
+    public function __construct($from, Connection $conn) {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
 
+        parent::__construct($conn);
         $this->type = "SELECT";
         $this->fields = $from.".*";
         $this->table = $from;
@@ -16,6 +18,7 @@ class SelectQuery extends BaseQuery {
 
     public function select($fields) {
         $this->fields = $fields;
+        return $this;
     }
 
     public function get() {
