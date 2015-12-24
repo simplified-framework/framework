@@ -66,11 +66,9 @@ class Model {
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        return (new SelectQuery($table_name, $conn))->join('table2', 'user.user_id', 'table2.user_id')
-            ->where("fieldName1", 1)->get();
+        return (new SelectQuery($table_name, $conn))->get();
     }
 
-    /*
     public static function find($id) {
         if (!is_numeric($id))
             throw new IllegalArgumentException("Argument must be numeric");
@@ -79,11 +77,14 @@ class Model {
         $instance = new $model_class();
         $table_name = $instance->getTable();
 
-        $builder = $instance->getBuilder();
-        // TODO check return value from PDO
-        //return $builder->select($table_name)->where($instance->getPrimaryKey(), array($id))->asObject($model_class)->fetch();//->execute()->fetch();
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database', $connectionName, 'default');
+        $conn = new Connection($config);
+
+        return (new SelectQuery($table_name, $conn))->where($instance->getPrimaryKey(), $id)->get();
     }
 
+/*
     public static function where ($field, $condition, $value) {
         $model_class = get_called_class();
         $instance = new $model_class();
