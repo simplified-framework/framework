@@ -35,6 +35,6 @@ class UpdateQuery extends CommonQuery {
     public function execute() {
         $q = $this->getQuery();
         $stmt = $this->connection()->raw($q);
-        return $stmt;
+        return $stmt ? $stmt->rowCount() : 0;
     }
 }
