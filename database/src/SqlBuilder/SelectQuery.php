@@ -41,7 +41,8 @@ class SelectQuery extends CommonQuery {
     }
 
     public function count() {
-
+        $clone = clone $this;
+        print $clone->select("COUNT(*)")->getQuery();
     }
 
     public function min($field) {
