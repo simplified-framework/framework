@@ -29,8 +29,8 @@ class SelectQuery extends CommonQuery {
 
     public function get() {
         $query = $this->getQuery();
-        print $query;
-        return null;
+        $result = $this->connection()->raw($query);
+        return $result;
     }
 
     public function count() {
