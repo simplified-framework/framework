@@ -7,7 +7,7 @@
  */
 
 namespace Simplified\Database\SqlBuilder;
-
+use Simplified\Database\Connection;
 
 class InsertQuery extends BaseQuery {
     public function __construct($table, Connection $connection) {
