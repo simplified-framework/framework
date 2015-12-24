@@ -17,11 +17,14 @@ class UpdateQuery extends CommonQuery {
 
     public function set(array $data) {
         $this->values = $data;
+        return $this;
     }
 
     public function getQuery() {
         $set = array();
         foreach ($this->values as $key => $value) {
+            if (is_string($value))
+                $value = "'".$value."'";
             $set[] = $key . "=" . $value;
         }
         $args = implode(", ", $set);
