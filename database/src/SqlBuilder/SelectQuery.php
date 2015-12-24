@@ -43,7 +43,9 @@ class SelectQuery extends CommonQuery {
     public function count() {
         $clone = clone $this;
         $query = $clone->select("COUNT(*)")->getQuery();
-        return $this->connection()->raw($query)->fetch();
+        $stmt  = $this->connection()->raw($query);
+        $stmt->setFetchMode(PDO::FETCH_COLUMN, 0);
+        return $stmt->fetch();
     }
 
     public function min($field) {
