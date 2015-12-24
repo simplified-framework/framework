@@ -9,9 +9,6 @@ class BaseQuery {
     private $andWhere = array();
     private $statement;
 
-    public function __construct() {
-    }
-
     // TODO implement more args
     public function where() {
         switch (func_num_args()) {
@@ -81,7 +78,25 @@ class BaseQuery {
     }
 
     public function whereBetween($field, array $params) {
-        // TODO implement SQL
+        if (count($params) != 2)
+            throw new IllegalArgumentException("Illegal data in array");
+
+        if (!is_string($field))
+            throw new IllegalArgumentException("First argument must be string");
+
+        $this->where[] = "$field BETWEEN " . $params[0] . " AND " . $params[1];
+        return $this;
+    }
+
+    public function whereNotBetween($field, array $params) {
+        if (count($params) != 2)
+            throw new IllegalArgumentException("Illegal data in array");
+
+        if (!is_string($field))
+            throw new IllegalArgumentException("First argument must be string");
+
+        $this->where[] = "$field NOT BETWEEN " . $params[0] . " AND " . $params[1];
+        return $this;
     }
 
     public function setStatement(Statement $stmt) {

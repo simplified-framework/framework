@@ -23,19 +23,19 @@ class SelectQuery extends BaseQuery {
 
     }
 
-    public function min() {
+    public function min($field) {
 
     }
 
-    public function max() {
+    public function max($field) {
 
     }
 
-    public function avg() {
+    public function avg($field) {
 
     }
 
-    public function sum() {
+    public function sum($field) {
 
     }
 }
