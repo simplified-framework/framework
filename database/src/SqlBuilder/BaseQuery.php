@@ -16,7 +16,7 @@ class BaseQuery {
     public function where() {
         switch (func_num_args()) {
             case 1:
-                // support raw where clauses: where("field", "value")
+                // support raw where clauses: where("field = value")
                 // support Closure where clauses: where(function($query){})
                 $this->andWhere[] = func_get_arg(0);
                 break;
@@ -38,8 +38,6 @@ class BaseQuery {
                 }
                 break;
             case 3:
-                // support where clause with operator: where("field", "<,>,=,!=,NOT,IN,NOT IN", "value")
-                // validate function args
                 $operator = func_get_arg(1);
                 $field = func_get_arg(0);
                 $params = func_get_arg(2);
@@ -70,6 +68,20 @@ class BaseQuery {
         }
 
         return $this;
+    }
+
+    public function whereIn($field, array $params) {
+        $query = clone $this;
+        return $query->where($field, "IN", $params);
+    }
+
+    public function whereNotIn($field, array $params) {
+        $query = clone $this;
+        return $query->where($field, "NOT IN", $params);
+    }
+
+    public function whereBetween($field, array $params) {
+        // TODO implement SQL
     }
 
     public function setStatement(Statement $stmt) {

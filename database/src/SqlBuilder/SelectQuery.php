@@ -18,4 +18,24 @@ class SelectQuery extends BaseQuery {
         print $query;
         return null;
     }
+
+    public function count() {
+
+    }
+
+    public function min() {
+
+    }
+
+    public function max() {
+
+    }
+
+    public function avg() {
+
+    }
+
+    public function sum() {
+
+    }
 }
