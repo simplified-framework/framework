@@ -9,7 +9,13 @@ class SelectQuery extends BaseQuery {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
 
-        $this->setStatement(new Statement(Statement::SELECT, $from));
+        $this->type = "SELECT";
+        $this->fields = $from.".*";
+        $this->table = $from;
+    }
+
+    public function select($fields) {
+        $this->fields = $fields;
     }
 
     public function get() {

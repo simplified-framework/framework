@@ -8,7 +8,10 @@ use Simplified\Database\ModelException;
 class BaseQuery {
     private $andWhere = array();
     private $joins = array();
-    private $statement;
+
+    protected $type;
+    protected $table;
+    protected $fields;
 
     // TODO implement more args
     public function where() {
@@ -119,7 +122,19 @@ class BaseQuery {
         if ($this->statement->type() == Statement::INSERT && count($this->andWhere) > 0)
             throw new ModelException("INSERT statements can't have a WHERE clause");
 
-        $query  = $this->statement->compile();
+        $query = "";
+        if ($this->type == "SELECT") {
+            $query = "SELECT ";
+            if ($this->fields) {
+                if (is_array($this->fields)) {
+                    $query .= implode(",", $this->fields);
+                } else {
+                    $query .= $this->fields;
+                }
+            } else {
+                throw new SqlSyntaxException("No fields selected");
+            }
+        }
 
         if (count($this->joins) > 0)
             $query .= " " . implode(" ", $this->joins);
