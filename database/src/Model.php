@@ -7,6 +7,7 @@ use ReflectionProperty;
 use Simplified\Database\SqlBuilder\InsertQuery;
 use Simplified\Database\SqlBuilder\SelectQuery;
 use Simplified\Database\SqlBuilder\UpdateQuery;
+use Simplified\Database\SqlBuilder\DeleteQuery;
 
 class Model {
     private $attributes = array();
