@@ -6,8 +6,7 @@ use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\Connection;
 
 class SelectQuery extends CommonQuery {
-    private $modelClassName;
-    public function __construct($from, $modelClassName, Connection $conn) {
+    public function __construct($from, Connection $conn) {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
 
@@ -15,7 +14,6 @@ class SelectQuery extends CommonQuery {
         $this->type = "SELECT";
         $this->fields = $from.".*";
         $this->table = $from;
-        $this->modelClassName = $modelClassName;
     }
 
     public function select($fields) {
@@ -33,7 +31,10 @@ class SelectQuery extends CommonQuery {
         $query = $this->getQuery();
         $stmt = $this->connection()->raw($query);
         if ($stmt && $stmt->rowCount() > 0) {
-            $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->modelClassName);
+            if ($this->objectClass)
+                $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->objectClass);
+            else
+                $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
             $result = $stmt->fetch();
             return $result;
         }
@@ -42,10 +43,7 @@ class SelectQuery extends CommonQuery {
 
     public function count() {
         $clone = clone $this;
-        $query = $clone->select("COUNT(*)")->getQuery();
-        $stmt  = $this->connection()->raw($query);
-        $stmt->setFetchMode(PDO::FETCH_COLUMN, 0);
-        return $stmt->fetch();
+        return $clone->select("COUNT(*)")->get();
     }
 
     public function min($field) {
