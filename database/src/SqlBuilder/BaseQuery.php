@@ -124,6 +124,7 @@ class BaseQuery {
             } else {
                 throw new SqlSyntaxException("No fields selected");
             }
+            $query .= " FROM " . $this->table;
         }
 
         if (count($this->joins) > 0)
