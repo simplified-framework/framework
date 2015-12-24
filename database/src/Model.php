@@ -81,7 +81,7 @@ class Model {
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        return (new SelectQuery($table_name, $conn))->where($instance->getPrimaryKey(), $id)->get();
+        return (new SelectQuery($table_name, $model_class, $conn))->where($instance->getPrimaryKey(), $id)->get();
     }
 
     public static function where ($field, $condition, $value) {

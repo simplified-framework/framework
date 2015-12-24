@@ -6,7 +6,8 @@ use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\Connection;
 
 class SelectQuery extends CommonQuery {
-    public function __construct($from, Connection $conn) {
+    private $modelClassName;
+    public function __construct($from, $modelClassName, Connection $conn) {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
 
@@ -14,6 +15,7 @@ class SelectQuery extends CommonQuery {
         $this->type = "SELECT";
         $this->fields = $from.".*";
         $this->table = $from;
+        $this->modelClassName = $modelClassName;
     }
 
     public function select($fields) {
@@ -29,8 +31,13 @@ class SelectQuery extends CommonQuery {
 
     public function get() {
         $query = $this->getQuery();
-        $result = $this->connection()->raw($query);
-        return $result;
+        $stmt = $this->connection()->raw($query);
+        if ($stmt && $stmt->rowCount() > 0) {
+            $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->modelClassName);
+            $result = $stmt->fetch();
+            return $result;
+        }
+        return false;
     }
 
     public function count() {
