@@ -22,7 +22,12 @@ class InsertQuery extends BaseQuery {
 
     public function getQuery() {
         $fields = implode(",",array_keys($this->values));
-        $values = implode(",",array_values($this->values));
+        $values = array();
+        foreach (array_values($this->values) as $value) {
+            $values[] = is_string($value) ? "'".$value."'" : $value;
+        }
+
+        $values = implode(",",array_values($values));
         return "INSERT INTO " . $this->table . " (" . $fields . ") VALUES (" . $values . ")";
     }
 
