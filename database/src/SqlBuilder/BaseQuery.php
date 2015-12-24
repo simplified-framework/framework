@@ -49,7 +49,7 @@ class BaseQuery {
                 }
                 else
                 if (is_array($params)) {
-                    $this->andWhere[] = "$field $operator " . implode(",", $params);
+                    $this->andWhere[] = "$field $operator (" . implode(",", $params) . ")";
                 }
                 break;
             case 0:
