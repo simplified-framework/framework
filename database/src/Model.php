@@ -3,9 +3,9 @@
 namespace Simplified\Database;
 
 use Simplified\Config\Config;
-use Simplified\Database\SqlBuilder\Builder;
 use ReflectionProperty;
 use Simplified\Database\SqlBuilder\SelectQuery;
+use Simplified\Database\SqlBuilder\UpdateQuery;
 
 class Model {
     private $attributes = array();
@@ -84,7 +84,6 @@ class Model {
         return (new SelectQuery($table_name, $conn))->where($instance->getPrimaryKey(), $id)->get();
     }
 
-/*
     public static function where ($field, $condition, $value) {
         $model_class = get_called_class();
         $instance = new $model_class();
@@ -96,6 +95,37 @@ class Model {
         //return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 
+    public function delete() {
+        $model_class = get_called_class();
+        $instance = new $model_class();
+        $table_name = $instance->getTable();
+
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database', $connectionName, 'default');
+        $conn = new Connection($config);
+
+        // TODO check if we have a ID in attributes
+        // TODO iff not, do nothing
+        $pk = $instance->getPrimaryKey();
+        return (new DeleteQuery($table_name, $conn))->where($instance->getPrimaryKey(), $this->attributes[$pk])->execute();
+    }
+
+    public function save() {
+        $model_class = get_called_class();
+        $instance = new $model_class();
+        $table_name = $instance->getTable();
+
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database', $connectionName, 'default');
+        $conn = new Connection($config);
+
+        // TODO check if we need update or insert
+        // TODO check with ID in attributes
+        $pk = $instance->getPrimaryKey();
+        return (new UpdateQuery($table_name, $conn))->where($instance->getPrimaryKey(), $this->attributes[$pk])->execute();
+    }
+
+/*
     public function hasMany($modelClass, $foreignKey = null) {
         $trace = debug_backtrace();
         $caller = $trace[1];
@@ -139,14 +169,6 @@ class Model {
             return $data;
         }
     }
-
-    public function delete() {
-        // TODO who can delete this record?
-    }
-
-    public function save() {
-        // TODO who can save this record?
-    }
     */
 
     public function __get($name) {
@@ -164,16 +186,6 @@ class Model {
         } else {
             $this->$name = $value;
         }
-    }
-
-    private function getBuilder() {
-        $connectionName = $this->getConnection();
-        $config = Config::get('database', $connectionName);
-        if (empty($config))
-            throw new ConnectionException('Unknown database connection: ' . $connectionName);
-
-        $builder = new Builder(new Connection($config));//, new Structure($this->getPrimaryKey()));
-        return $builder;
     }
 }
 

@@ -5,7 +5,7 @@ namespace Simplified\Database\SqlBuilder;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\Connection;
 
-class SelectQuery extends BaseQuery {
+class SelectQuery extends CommonQuery {
     public function __construct($from, Connection $conn) {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
