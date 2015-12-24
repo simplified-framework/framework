@@ -47,18 +47,22 @@ class SelectQuery extends CommonQuery {
     }
 
     public function min($field) {
-
+        $clone = clone $this;
+        return $clone->select("MIN($field) AS counter")->setObjectClassName(null)->get();
     }
 
     public function max($field) {
-
+        $clone = clone $this;
+        return $clone->select("MAX($field) AS counter")->setObjectClassName(null)->get();
     }
 
     public function avg($field) {
-
+        $clone = clone $this;
+        return $clone->select("AVG($field) AS counter")->setObjectClassName(null)->get();
     }
 
     public function sum($field) {
-
+        $clone = clone $this;
+        return $clone->select("SUM($field) AS counter")->setObjectClassName(null)->get();
     }
 }

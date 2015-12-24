@@ -17,11 +17,18 @@ class InsertQuery extends BaseQuery {
 
     public function set(array $data) {
         $this->values = $data;
+        return $this;
     }
 
     public function getQuery() {
         $fields = implode(",",array_keys($this->values));
         $values = implode(",",array_values($this->values));
         return "INSERT INTO " . $this->table . " (" . $fields . ") VALUES (" . $values . ")";
+    }
+
+    public function execute() {
+        $q = $this->getQuery();
+        $stmt = $this->connection()->raw($q);
+        return $stmt ? $this->connection()->lastInsertId() : 0;
     }
 }

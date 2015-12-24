@@ -4,6 +4,7 @@ namespace Simplified\Database;
 
 use Simplified\Config\Config;
 use ReflectionProperty;
+use Simplified\Database\SqlBuilder\InsertQuery;
 use Simplified\Database\SqlBuilder\SelectQuery;
 use Simplified\Database\SqlBuilder\UpdateQuery;
 
@@ -89,6 +90,7 @@ class Model {
             ->get();
     }
 
+    /*
     public static function where ($field, $condition, $value) {
         $model_class = get_called_class();
         $instance = new $model_class();
@@ -116,6 +118,7 @@ class Model {
             ->where($instance->getPrimaryKey(), $this->attributes[$pk])
             ->execute();
     }
+    */
 
     public function save() {
         $model_class = get_called_class();
@@ -129,10 +132,16 @@ class Model {
         // TODO check if we need update or insert
         // TODO check with ID in attributes
         $pk = $instance->getPrimaryKey();
-        return (new UpdateQuery($table_name, $conn))
-            ->set($this->attributes)
-            ->where($instance->getPrimaryKey(), $this->attributes[$pk])
-            ->execute();
+        if (isset($this->attributes[$pk])) {
+            return (new UpdateQuery($table_name, $conn))
+                ->set($this->attributes)
+                ->where($instance->getPrimaryKey(), $this->attributes[$pk])
+                ->execute();
+        } else {
+            return (new InsertQuery($table_name, $conn))
+                ->set($this->attributes)
+                ->execute();
+        }
     }
 
 /*
