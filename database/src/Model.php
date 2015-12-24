@@ -63,7 +63,7 @@ class Model {
 
         $builder = $instance->getBuilder();
         // TODO check return value from PDO
-        return $builder->select($table_name)->whereNotNetween("fieldName1", array(5,6,7,8))->get();//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
+        return $builder->select($table_name)->whereNotBetween("fieldName1", array(5,6))->get();//->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
 
     /*

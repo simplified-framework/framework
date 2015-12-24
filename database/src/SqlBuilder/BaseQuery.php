@@ -84,7 +84,7 @@ class BaseQuery {
         if (!is_string($field))
             throw new IllegalArgumentException("First argument must be string");
 
-        $this->where[] = "$field BETWEEN " . $params[0] . " AND " . $params[1];
+        $this->andWhere[] = "$field BETWEEN " . $params[0] . " AND " . $params[1];
         return $this;
     }
 
@@ -95,7 +95,7 @@ class BaseQuery {
         if (!is_string($field))
             throw new IllegalArgumentException("First argument must be string");
 
-        $this->where[] = "$field NOT BETWEEN " . $params[0] . " AND " . $params[1];
+        $this->andWhere[] = "$field NOT BETWEEN " . $params[0] . " AND " . $params[1];
         return $this;
     }
 

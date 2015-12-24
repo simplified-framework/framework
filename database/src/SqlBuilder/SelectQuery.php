@@ -9,7 +9,6 @@ class SelectQuery extends BaseQuery {
         if (!is_string($from) || is_null($from))
             throw new IllegalArgumentException("No table name specified");
 
-        parent::__construct();
         $this->setStatement(new Statement(Statement::SELECT, $from));
     }
 
