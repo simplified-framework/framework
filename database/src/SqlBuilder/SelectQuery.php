@@ -21,6 +21,11 @@ class SelectQuery extends CommonQuery {
         return $this;
     }
 
+    public function getQuery() {
+        $query = "SELECT ___FIELDS___ FROM " . $this->table;
+        return $query . " " . parent::getQuery();
+    }
+
     public function get() {
         $query = $this->getQuery();
         print $query;
