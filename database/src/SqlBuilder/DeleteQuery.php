@@ -14,4 +14,15 @@ class DeleteQuery extends CommonQuery {
         parent::__construct($connection);
         $this->table = $table;
     }
+
+    public function getQuery() {
+        $query = "DELETE FROM " . $this->table;
+        return $query . " " . parent::getQuery();
+    }
+
+    public function execute() {
+        $q = $this->getQuery();
+        $stmt = $this->connection()->raw($q);
+        return $stmt ? $stmt->rowCount() : 0;
+    }
 }

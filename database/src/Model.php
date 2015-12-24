@@ -101,23 +101,6 @@ class Model {
         // TODO check clause against SQL injection!
         //return $builder->select($table_name)->where("$field $condition $value")->asObject($model_class)->fetchAll();//->execute()->fetchAll();
     }
-
-    public function delete() {
-        $model_class = get_called_class();
-        $instance = new $model_class();
-        $table_name = $instance->getTable();
-
-        $connectionName = $instance->getConnection();
-        $config = Config::get('database', $connectionName, 'default');
-        $conn = new Connection($config);
-
-        // TODO check if we have a ID in attributes
-        // TODO iff not, do nothing
-        $pk = $instance->getPrimaryKey();
-        return (new DeleteQuery($table_name, $conn))
-            ->where($instance->getPrimaryKey(), $this->attributes[$pk])
-            ->execute();
-    }
     */
 
     public function save() {
@@ -129,8 +112,6 @@ class Model {
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        // TODO check if we need update or insert
-        // TODO check with ID in attributes
         $pk = $instance->getPrimaryKey();
         if (isset($this->attributes[$pk])) {
             return (new UpdateQuery($table_name, $conn))
@@ -138,10 +119,34 @@ class Model {
                 ->where($instance->getPrimaryKey(), $this->attributes[$pk])
                 ->execute();
         } else {
-            return (new InsertQuery($table_name, $conn))
+            $id = (new InsertQuery($table_name, $conn))
                 ->set($this->attributes)
                 ->execute();
+            if ($id > 0) {
+                $this->attributes[$pk] = $id;
+            }
+            return $id;
         }
+    }
+
+    public function delete() {
+        $model_class = get_called_class();
+        $instance = new $model_class();
+        $table_name = $instance->getTable();
+
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database', $connectionName, 'default');
+        $conn = new Connection($config);
+
+        // TODO check if we have a ID in attributes
+        // TODO if not, do nothing
+        $pk = $instance->getPrimaryKey();
+        if (!isset($this->attributes[$pk]))
+            return -1;
+
+        return (new DeleteQuery($table_name, $conn))
+            ->where($instance->getPrimaryKey(), $this->attributes[$pk])
+            ->execute();
     }
 
 /*
