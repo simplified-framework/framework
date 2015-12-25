@@ -150,15 +150,9 @@ class Model {
             ->execute();
     }
 
-/*
     public function hasMany($modelClass, $foreignKey = null) {
-        $trace = debug_backtrace();
-        $caller = $trace[1];
-
-        $attr = $caller['function'];
-        if ($this->getProperty($attr))
-            return $this->getProperty($attr);
-
+        print_r(func_get_args());
+        /*
         if (class_exists($modelClass)) {
             $pk = $this->getPrimaryKey();
             $id_value = $this->$pk;
@@ -171,8 +165,10 @@ class Model {
             $this->$attr = $data;
             return $data;
         }
+        */
     }
 
+/*
     public function hasOne($modelClass, $foreignKey = null) {
         $trace = debug_backtrace();
         $caller = $trace[1];
