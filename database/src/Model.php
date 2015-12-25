@@ -102,8 +102,7 @@ class Model {
 
         return (new SelectQuery($table_name, $conn))
             ->setObjectClassName($model_class)
-            ->where($field, $condition, $value)
-            ->get();
+            ->where($field, $condition, $value);
     }
 
     public function save() {
