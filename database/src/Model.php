@@ -107,9 +107,7 @@ class Model {
 
     public function save() {
         $table_name = $this->getTable();
-
-        $connectionName = $this->getConnection();
-        $config = Config::get('database', $connectionName, 'default');
+        $config = Config::get('database', $this->getConnection(), 'default');
         $conn = new Connection($config);
 
         $pk = $this->getPrimaryKey();
@@ -131,9 +129,7 @@ class Model {
 
     public function delete() {
         $table_name = $this->getTable();
-
-        $connectionName = $this->getConnection();
-        $config = Config::get('database', $connectionName, 'default');
+        $config = Config::get('database', $this->getConnection(), 'default');
         $conn = new Connection($config);
 
         $pk = $this->getPrimaryKey();
