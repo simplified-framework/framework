@@ -151,7 +151,8 @@ class Model {
     }
 
     public function hasMany($modelClass, $foreignKey = null) {
-        print_r(func_get_args());
+        $caller = next(debug_backtrace())['function'];
+        print_r($caller);
         /*
         if (class_exists($modelClass)) {
             $pk = $this->getPrimaryKey();
