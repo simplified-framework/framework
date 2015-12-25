@@ -1,18 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Andreas
- * Date: 25.12.2015
- * Time: 09:13
- */
 
 namespace Simplified\Database\SqlBuilder;
+
+use Simplified\Core\IllegalArgumentException;
 
 class Aggregate {
     private $field;
     private $type;
+    private static $aggregates = array("COUNT", "MIN", "MAX", "AVG", "SUM");
 
     public static function __callStatic($name, $arguments) {
+        if (!in_array(strtoupper($name), self::$aggregates))
+            throw new IllegalArgumentException("Invalid aggregate function");
+
+        if (!is_array($arguments) || isset($arguments[0]))
+            throw new IllegalArgumentException("One argument for table field required");
+
+        if (!is_string($arguments[0]))
+            throw new IllegalArgumentException("Table field must be a string");
+
         return new self($arguments[0], $name);
     }
 

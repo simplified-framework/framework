@@ -15,6 +15,7 @@ class CommonQuery extends BaseQuery{
     private $joins = array();
     private $limit = null;
     private $groups = array();
+    private $having = null;
 
     public function __construct(Connection $connection) {
         parent::__construct($connection);
@@ -129,7 +130,9 @@ class CommonQuery extends BaseQuery{
     }
 
     public function having(Aggregate $aggregate, $operator, $value) {
-        print $aggregate;
+        if (is_string($value))
+            $value = "'".$value."'";
+        $this->having = $aggregate . $operator . $value;
         return $this;
     }
 
@@ -143,6 +146,9 @@ class CommonQuery extends BaseQuery{
 
         if (count($this->groups) > 0)
             $query .= " GROUP BY " . implode(",", $this->groups);
+
+        if ($this->having)
+            $query .= " " . $this->having;
 
         if ($this->limit)
             $query .= " LIMIT " . $this->limit;
