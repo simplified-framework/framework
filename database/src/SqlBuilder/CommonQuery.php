@@ -13,6 +13,7 @@ use Simplified\Core\IllegalArgumentException;
 class CommonQuery extends BaseQuery{
     private $andWhere = array();
     private $joins = array();
+    private $limit = null;
 
     public function __construct(Connection $connection) {
         parent::__construct($connection);
@@ -116,6 +117,10 @@ class CommonQuery extends BaseQuery{
         return $this;
     }
 
+    public function limit ($num) {
+        $this->limit = is_numeric($num) ? $num : null;
+    }
+
     public function getQuery() {
         $query = "";
         if (count($this->joins) > 0)
@@ -123,6 +128,9 @@ class CommonQuery extends BaseQuery{
 
         if (count($this->andWhere) > 0)
             $query .= " WHERE " . implode(" AND ", $this->andWhere);
+
+        if ($this->limit)
+            $query .= " LIMIT " . $this->limit;
         return $query;
     }
 }
