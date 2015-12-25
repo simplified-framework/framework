@@ -119,6 +119,7 @@ class CommonQuery extends BaseQuery{
 
     public function limit ($num) {
         $this->limit = is_numeric($num) ? $num : null;
+        return $this;
     }
 
     public function getQuery() {
