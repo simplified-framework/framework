@@ -9,15 +9,19 @@
 namespace Simplified\Database\SqlBuilder;
 
 class Aggregate {
-    private static $field;
-    private static $type;
+    private $field;
+    private $type;
 
     public static function __callStatic($name, $arguments) {
-        self::$type = $name;
-        self::$field = $arguments[0];
+        return new self($arguments[0], $name);
     }
 
     public function __toString() {
-        return strtoupper(self::$type) . "(" . self::$field . ")";
+        return strtoupper($this->type) . "(" . $this->field . ")";
+    }
+
+    private function __construct($field, $type) {
+        $this->field = $field;
+        $this->type = $type;
     }
 }
