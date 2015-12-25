@@ -151,9 +151,6 @@ class Model {
     }
 
     public function hasMany($modelClass, $foreignKey = null) {
-        $caller = next(debug_backtrace())['function'];
-        print_r($caller);
-        /*
         if (class_exists($modelClass)) {
             $pk = $this->getPrimaryKey();
             $id_value = $this->$pk;
@@ -163,10 +160,8 @@ class Model {
             $rel_table = $instance->getTable();
 
             $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->get();
-            $this->$attr = $data;
             return $data;
         }
-        */
     }
 
 /*
@@ -200,6 +195,10 @@ class Model {
 
         if (isset($this->$name))
             return $this->$name;
+
+        if (method_exists($this, $name)) {
+            return call_user_func(array($this, $name));
+        }
     }
 
     public function __set($name, $value) {
