@@ -163,15 +163,7 @@ class Model {
         }
     }
 
-/*
     public function hasOne($modelClass, $foreignKey = null) {
-        $trace = debug_backtrace();
-        $caller = $trace[1];
-
-        $attr = $caller['function'];
-        if ($this->getProperty($attr))
-            return $this->getProperty($attr);
-
         if (class_exists($modelClass)) {
             $pk = $this->getPrimaryKey();
             $id_value = $this->$pk;
@@ -181,11 +173,9 @@ class Model {
             $rel_table = $instance->getTable();
 
             $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->limit(1)->get();
-            $this->$attr = $data;
             return $data;
         }
     }
-    */
 
     public function __get($name) {
         if (isset($this->attributes[$name])) {
