@@ -4,7 +4,6 @@ namespace Simplified\Database;
 
 use Simplified\Config\Config;
 use ReflectionProperty;
-use Simplified\Database\SqlBuilder\Aggregate;
 use Simplified\Database\SqlBuilder\InsertQuery;
 use Simplified\Database\SqlBuilder\SelectQuery;
 use Simplified\Database\SqlBuilder\UpdateQuery;
@@ -89,7 +88,6 @@ class Model {
         return (new SelectQuery($table_name, $conn))
             ->setObjectClassName($model_class)
             ->where($instance->getPrimaryKey(), $id)
-            ->having(Aggregate::count("user_id"), ">", 0)
             ->get();
     }
 
@@ -108,19 +106,17 @@ class Model {
     }
 
     public function save() {
-        $model_class = get_called_class();
-        $instance = new $model_class();
-        $table_name = $instance->getTable();
+        $table_name = $this->getTable();
 
-        $connectionName = $instance->getConnection();
+        $connectionName = $this->getConnection();
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        $pk = $instance->getPrimaryKey();
+        $pk = $this->getPrimaryKey();
         if (isset($this->attributes[$pk])) {
             return (new UpdateQuery($table_name, $conn))
                 ->set($this->attributes)
-                ->where($instance->getPrimaryKey(), $this->attributes[$pk])
+                ->where($pk, $this->attributes[$pk])
                 ->execute();
         } else {
             $id = (new InsertQuery($table_name, $conn))
@@ -134,20 +130,18 @@ class Model {
     }
 
     public function delete() {
-        $model_class = get_called_class();
-        $instance = new $model_class();
-        $table_name = $instance->getTable();
+        $table_name = $this->getTable();
 
-        $connectionName = $instance->getConnection();
+        $connectionName = $this->getConnection();
         $config = Config::get('database', $connectionName, 'default');
         $conn = new Connection($config);
 
-        $pk = $instance->getPrimaryKey();
+        $pk = $this->getPrimaryKey();
         if (!isset($this->attributes[$pk]))
             return -1;
 
         return (new DeleteQuery($table_name, $conn))
-            ->where($instance->getPrimaryKey(), $this->attributes[$pk])
+            ->where($pk, $this->attributes[$pk])
             ->execute();
     }
 
@@ -163,6 +157,7 @@ class Model {
             $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->get();
             return $data;
         }
+        throw new ModelException("Unknown model class $modelClass");
     }
 
     public function hasOne($modelClass, $foreignKey = null) {
@@ -177,6 +172,7 @@ class Model {
             $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->limit(1)->get();
             return $data;
         }
+        throw new ModelException("Unknown model class $modelClass");
     }
 
     public function __get($name) {
