@@ -9,8 +9,12 @@ class Aggregate {
     private $type;
     private static $aggregates = array("COUNT", "MIN", "MAX", "AVG", "SUM");
 
+    public static function isAggregate($name) {
+        return in_array(strtoupper($name), self::$aggregates);
+    }
+
     public static function __callStatic($name, $arguments) {
-        if (!in_array(strtoupper($name), self::$aggregates))
+        if (!Aggregate::isAggregate($name))
             throw new IllegalArgumentException("Invalid aggregate function");
 
         if (!is_array($arguments) || !isset($arguments[0]))

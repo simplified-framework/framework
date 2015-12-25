@@ -59,6 +59,8 @@ class SelectQuery extends CommonQuery {
         return null;
     }
 
+    // TODO implement dynamic aggregate method
+
     public function count() {
         $clone = clone $this;
         return $clone->select("COUNT(*) AS counter")->setObjectClassName(null)->get();
