@@ -6,6 +6,7 @@ use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\Connection;
 
 class SelectQuery extends CommonQuery {
+    private $distinct = false;
     private $orderBy = array();
 
     public function __construct($from, Connection $conn) {
@@ -23,6 +24,10 @@ class SelectQuery extends CommonQuery {
         return $this;
     }
 
+    public function distinct($enable) {
+        $this->distinct = $enable ? true : false;
+    }
+
     public function orderBy($field, $direction = "ASC") {
         $dir = strtoupper($direction) == "ASC" ? "ASC" : "DESC";
         $this->orderBy[] = "ORDER BY $field $dir";
@@ -31,7 +36,8 @@ class SelectQuery extends CommonQuery {
 
     public function getQuery() {
         $fields = is_array($this->fields) ? implode(",", $this->fields) : $this->fields;
-        $query = "SELECT $fields FROM " . $this->table . " " . parent::getQuery();
+        $distinct = $this->distinct ? "DISTINCT" : null;
+        $query = "SELECT $distinct $fields FROM " . $this->table . " " . parent::getQuery();
         if (count($this->orderBy) > 0) {
             $query .= " " . implode(", ", $this->orderBy);
         }
