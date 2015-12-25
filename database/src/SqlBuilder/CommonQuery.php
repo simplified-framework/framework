@@ -132,7 +132,7 @@ class CommonQuery extends BaseQuery{
     public function having(Aggregate $aggregate, $operator, $value) {
         if (is_string($value))
             $value = "'".$value."'";
-        $this->having = $aggregate . $operator . $value;
+        $this->having = " HAVING $aggregate $operator $value";
         return $this;
     }
 

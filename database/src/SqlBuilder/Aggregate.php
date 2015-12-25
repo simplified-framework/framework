@@ -13,7 +13,7 @@ class Aggregate {
         if (!in_array(strtoupper($name), self::$aggregates))
             throw new IllegalArgumentException("Invalid aggregate function");
 
-        if (!is_array($arguments) || isset($arguments[0]))
+        if (!is_array($arguments) || !isset($arguments[0]))
             throw new IllegalArgumentException("One argument for table field required");
 
         if (!is_string($arguments[0]))
