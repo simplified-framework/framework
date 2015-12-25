@@ -26,7 +26,7 @@ class SelectQuery extends CommonQuery {
 
     public function distinct($enable = true) {
         $this->distinct = $enable ? true : false;
-        return this;
+        return $this;
     }
 
     public function orderBy($field, $direction = "ASC") {
