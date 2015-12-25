@@ -4,6 +4,7 @@ namespace Simplified\Database;
 
 use Simplified\Config\Config;
 use ReflectionProperty;
+use Simplified\Database\SqlBuilder\Aggregate;
 use Simplified\Database\SqlBuilder\InsertQuery;
 use Simplified\Database\SqlBuilder\SelectQuery;
 use Simplified\Database\SqlBuilder\UpdateQuery;
@@ -88,6 +89,7 @@ class Model {
         return (new SelectQuery($table_name, $conn))
             ->setObjectClassName($model_class)
             ->where($instance->getPrimaryKey(), $id)
+            ->having(Aggregate::count("user_id"), ">", 0)
             ->get();
     }
 
