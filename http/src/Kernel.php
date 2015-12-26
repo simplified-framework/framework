@@ -16,8 +16,6 @@ define ("RESOURCES_PATH", APP_PATH . "resources" . DIRECTORY_SEPARATOR);
 define ("RESOURCES_VENDOR_PATH", RESOURCES_PATH . "vendor" . DIRECTORY_SEPARATOR);
 define ("CONFIG_PATH", APP_PATH . "config" . DIRECTORY_SEPARATOR);
 
-// TODO dont simply cho return values, instead check response type
-
 // handle debug
 Debug::handleDebug();
 
@@ -26,7 +24,7 @@ require CONFIG_PATH . 'routes.php';
 
 class Kernel {
     public function handleRequest() {
-    	ob_start ();
+        ob_start ();
 
         if (headers_sent())
             throw new SessionException('Unable to start session handling, headers already sent.');
@@ -72,7 +70,7 @@ class Kernel {
                     $pattern = str_replace("{".$key."}", "($val)", $pattern);
                 }
             } else {
-                $pattern = str_replace('{[a-zA-Z]+\}', "([a-zA-Z]+)", $pattern);
+                $pattern = preg_replace('/\{[a-zA-Z]+\}/', "([a-zA-Z]+)", $pattern);
             }
 
             // compile pattern
@@ -102,7 +100,7 @@ class Kernel {
 
         // if we use a closure, call them with the request object
         if ($current_route->closure) {
-        	$content = null;
+            $content = null;
             $ref = new \ReflectionFunction ($current_route->closure);
             if ($ref->getNumberOfParameters() > 0) {
                 $params = array();
@@ -119,24 +117,24 @@ class Kernel {
             else {
                 $retval = $current_route->closure();
             }
-            
-	        $clean_content = ob_get_clean ();
-	        if ($clean_content != null) {
+
+            $clean_content = ob_get_clean ();
+            if ($clean_content != null) {
                 (new Response($clean_content))->send();
-	        }
-	        if ($retval != null) {
+            }
+            if ($retval != null) {
                 if (is_string($retval)) {
                     (new Response($retval))->send();
                 }
                 else
-                if ($retval instanceof Response) {
-                    $retval->send();
-                }
-                else
-                if (is_array($retval)){
-                    (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
-                }
-	        }
+                    if ($retval instanceof Response) {
+                        $retval->send();
+                    }
+                    else
+                        if (is_array($retval)){
+                            (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
+                        }
+            }
 
             return;
         }
@@ -159,7 +157,7 @@ class Kernel {
         $ref = new \ReflectionClass ($controller);
         $num_params = $ref->getMethod($method)->getNumberOfParameters();
         $retval = null;
-        
+
         if ($num_params > 0) {
             $ref_method = $ref->getMethod($method);
             $params = array();
@@ -175,7 +173,7 @@ class Kernel {
         else {
             $retval = call_user_func(array(new $controller, $method));
         }
-        
+
         $clean_content = ob_get_clean ();
         if ($clean_content != null) {
             (new Response($clean_content))->send();
@@ -186,13 +184,13 @@ class Kernel {
                 (new Response($retval))->send();
             }
             else
-            if ($retval instanceof Response) {
-                $retval->send();
-            }
-            else
-            if (is_array($retval)){
-                (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
-            }
+                if ($retval instanceof Response) {
+                    $retval->send();
+                }
+                else
+                    if (is_array($retval)){
+                        (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
+                    }
         }
     }
 }
