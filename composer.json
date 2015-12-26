@@ -1,6 +1,7 @@
 {
     "name": "simplified/framework",
     "description": "Simplified framework module",
+    "license":"MIT",
     "authors": [
         {
             "name": "Andreas Bratfisch",
@@ -27,5 +28,6 @@
 		"files": [
 			"http/src/helper.php"
 		]
-    }
+    },
+    "minimum-stability":"dev"
 }
