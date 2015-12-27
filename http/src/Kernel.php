@@ -24,118 +24,52 @@ require CONFIG_PATH . 'routes.php';
 
 class Kernel {
     public function handleRequest() {
-        ob_start ();
+    	ob_start ();
 
-        if (headers_sent())
-            throw new SessionException('Unable to start session handling, headers already sent.');
+        $this->startSession();
 
-        $provider = Config::get('providers', 'session');
-        if ($provider) {
-            if (!class_exists($provider))
-                throw new IllegalArgumentException('Unable to set session provider to ' . $provider);
-
-            $handlerClass = (new $provider())->provides();
-            $handler = new $handlerClass();
-            session_set_save_handler($handler, true);
-        }
-        session_start();
-
-        // load declared routes
-        $routes = RouteCollection::instance()->toArray();
-
-        if ($routes == null || count($routes) == 0)
+        $routes = RouteCollection::instance();
+        if ($routes == null || $routes->count() == 0)
             throw new \ErrorException('Unable to load routes from configuration directory.');
 
-        $req = Request::createFromGlobals();
-        $path = $req->path();
+        $request = Request::createFromGlobals();
+        $path = $request->path();
         $current_route = null;
         $matches = array();
 
-        foreach ($routes as $route) {
-            $route_path = $route->path;
-            // current route is equal to configured route
-            if ($route_path === $path) {
-                if ($route->method != $req->method())
-                    throw new MethodNotAllowedException("Method " . $req->method() . " not allowed.");
+        $urlMatcher = new UrlMatcher($routes, $request);
+        switch ($urlMatcher->matches($path)) {
+            case UrlMatcher::UNKNOWN_RESOURCE:
+                throw new ResourceNotFoundException('Route not found: ' . $path);
+                return;
 
-                $current_route = $route;
+            case UrlMatcher::METHOD_MISMATCH:
+                throw new MethodNotAllowedException("Method not allowed");
+                return;
+
+            case UrlMatcher::MATCH_FOUND:
+                $current_route = $urlMatcher->getMatchedRoute();
+                $matches = $urlMatcher->getMatches();
                 break;
-            }
-
-            // find route with regex
-            $matches = array();
-            $pattern = str_replace("/", "\\/", $route_path);
-            if ( count($route->conditions) > 0 ) {
-                foreach ($route->conditions as $key => $val) {
-                    $pattern = str_replace("{".$key."}", "($val)", $pattern);
-                }
-            } else {
-                $pattern = preg_replace('/\{[a-zA-Z]+\}/', "([a-zA-Z]+)", $pattern);
-            }
-
-            // compile pattern
-            if (0 === preg_match('/'.$pattern.'/', $path, $matches)) {
-                throw new ResourceNotFoundException('Route not found: ' . $path . " (Regex returned 0 for pattern '$pattern' with route $path)");
-            }
-
-            // compile pattern
-            if (FALSE === preg_match('/'.$pattern.'/', $path, $matches)) {
-                throw new ResourceNotFoundException('Route not found: ' . $path . " (Regex compiler error)");
-            }
-
-            // current route can be translated to regex pattern
-            if (count($matches) >= 2 && !empty($matches[1])) {
-                if ($route->method != $req->method())
-                    throw new MethodNotAllowedException("Method " . $req->method() . " not allowed.");
-
-                array_shift($matches); // remove first element
-                $current_route = $route;
-                break;
-            }
         }
-
-        // TODO if route was not found, throw 404 exception
-        if ($current_route == null)
-            throw new ResourceNotFoundException('Route not found: ' . $path);
 
         // if we use a closure, call them with the request object
         if ($current_route->closure) {
-            $content = null;
+        	$content = null;
+            $params = array();
             $ref = new \ReflectionFunction ($current_route->closure);
             if ($ref->getNumberOfParameters() > 0) {
-                $params = array();
                 $first = $ref->getParameters()[0];
                 if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
-                    $params[] = $req;
+                    $params[] = $request;
 
                 foreach ($matches as $match) {
                     $params[] = $match;
                 }
-
-                $retval = call_user_func_array($current_route->closure, $params);
-            }
-            else {
-                $retval = $current_route->closure();
             }
 
-            $clean_content = ob_get_clean ();
-            if ($clean_content != null) {
-                (new Response($clean_content))->send();
-            }
-            if ($retval != null) {
-                if (is_string($retval)) {
-                    (new Response($retval))->send();
-                }
-                else
-                    if ($retval instanceof Response) {
-                        $retval->send();
-                    }
-                    else
-                        if (is_array($retval)){
-                            (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
-                        }
-            }
-
+            $retval = call_user_func_array($current_route->closure, $params);
+            $this->handleContent($retval);
             return;
         }
 
@@ -157,40 +91,57 @@ class Kernel {
         $ref = new \ReflectionClass ($controller);
         $num_params = $ref->getMethod($method)->getNumberOfParameters();
         $retval = null;
+        $params = array();
 
         if ($num_params > 0) {
             $ref_method = $ref->getMethod($method);
-            $params = array();
             $first = $ref_method->getParameters()[0];
             if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
-                $params[] = $req;
+                $params[] = $request;
             foreach ($matches as $match) {
                 $params[] = $match;
             }
-
-            $retval = call_user_func_array(array(new $controller, $method), $params);
         }
-        else {
-            $retval = call_user_func(array(new $controller, $method));
-        }
+        $retval = call_user_func_array(array(new $controller, $method), $params);
 
+        $this->handleContent($retval);
+    }
+
+    private function startSession() {
+        if (headers_sent())
+            throw new SessionException('Unable to start session handling, headers already sent.');
+
+        $provider = Config::get('providers', 'session');
+        if ($provider) {
+            if (!class_exists($provider))
+                throw new IllegalArgumentException('Unable to set session provider to ' . $provider);
+
+            $handlerClass = (new $provider())->provides();
+            $handler = new $handlerClass();
+            session_set_save_handler($handler, true);
+        }
+        session_start();
+    }
+
+    private function handleContent($content) {
         $clean_content = ob_get_clean ();
         if ($clean_content != null) {
             (new Response($clean_content))->send();
         }
 
-        if ($retval != null) {
-            if (is_string($retval)) {
-                (new Response($retval))->send();
+        if ($content != null) {
+            if (is_string($content)) {
+                (new Response($content))->send();
             }
-            else
-                if ($retval instanceof Response) {
-                    $retval->send();
-                }
-                else
-                    if (is_array($retval)){
-                        (new Response(json_encode($retval), 200, array('Content-Type' => 'application/json')))->send();
+            else {
+                if ($content instanceof Response) {
+                    $content->send();
+                } else {
+                    if (is_array($content)) {
+                        (new Response(json_encode($content), 200, array('Content-Type' => 'application/json')))->send();
                     }
+                }
+            }
         }
     }
 }
