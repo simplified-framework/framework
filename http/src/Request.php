@@ -11,6 +11,7 @@ class Request {
     private $clientAddress;
     private $isajax;
     private $headers;
+    private static $data;
     private static $instance;
 
     public static function createFromGlobals() {
@@ -18,6 +19,13 @@ class Request {
             self::$instance = new self();
 
         return self::$instance;
+    }
+
+    public static function input($key, $default = null) {
+        if (isset(self::$data[$key]))
+            return self::$data[$key];
+
+        return $default;
     }
 
     public function method() {
@@ -70,5 +78,11 @@ class Request {
             $isAjax = true;
         }
         $this->isajax = $isAjax;
+
+        $data = array();
+        $data = array_merge($data, $_GET);
+        $data = array_merge($data, $_POST);
+        $data = array_merge($data, $_FILES);
+        self::$data = $data;
     }
 }
