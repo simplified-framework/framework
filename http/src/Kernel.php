@@ -33,7 +33,7 @@ class Kernel {
             throw new \ErrorException('Unable to load routes from configuration directory.');
 
         $request = Request::createFromGlobals();
-        $path = $request->path();
+        $path = $request->getUri()->getPath();
         $current_route = null;
         $matches = array();
 

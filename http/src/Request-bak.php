@@ -1,18 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Andreas
- * Date: 28.12.2015
- * Time: 19:07
- */
 
 namespace Simplified\Http;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriInterface;
 
-class Request implements RequestInterface {
+class RequestBak {
     private $method;
     private $uri;
     private $querystring;
@@ -20,7 +11,6 @@ class Request implements RequestInterface {
     private $clientAddress;
     private $isajax;
     private $headers;
-    private $protocolVersion;
     private static $data;
     private static $instance;
 
@@ -38,66 +28,43 @@ class Request implements RequestInterface {
         return $default;
     }
 
-    public function getProtocolVersion() {
-    }
-
-    public function withProtocolVersion($version) {
-    }
-
-    public function getHeaders() {
-        return $this->headers;
-    }
-
-    public function hasHeader($name) {
-    }
-
-    public function getHeader($name) {
-    }
-
-    public function getHeaderLine($name) {
-    }
-
-    public function withHeader($name, $value) {
-    }
-
-    public function withAddedHeader($name, $value) {
-    }
-
-    public function withoutHeader($name) {
-    }
-
-    public function getBody() {
-    }
-
-    public function withBody(StreamInterface $body) {
-    }
-
-    public function getRequestTarget() {
-    }
-
-    public function withRequestTarget($requestTarget) {
-    }
-
-    public function getMethod() {
+    public function method() {
         return $this->method;
     }
 
-    public function withMethod($method) {
-    }
-
-    public function getUri() {
+    public function uri() {
         return $this->uri;
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false) {
+    public function path() {
+        return str_replace("?".$this->querystring, "", $this->uri);
+    }
+
+    public function queryString() {
+        return $this->querystring;
+    }
+
+    public function segments() {
+        return $this->segments;
+    }
+
+    public function clientAddress() {
+        return $this->clientAddress;
+    }
+
+    public function isAjax() {
+        return $this->isajax;
+    }
+
+    public function headers() {
+        return $this->headers;
     }
 
     private function __construct() {
-        $this->uri = Uri::fromString($_SERVER['REQUEST_URI']);
         $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->uri = $_SERVER['REQUEST_URI'];
         $this->querystring = $_SERVER['QUERY_STRING'];
         $this->clientAddress = $_SERVER['REMOTE_ADDR'];
-        $this->protocolVersion = str_replace("HTTP/","",$_SERVER['SERVER_PROTOCOL']);
 
         $segments_data = explode("/", substr(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'], 1));
         if ($segments_data == null || !is_array($segments_data))

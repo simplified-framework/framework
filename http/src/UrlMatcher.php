@@ -30,7 +30,7 @@ class UrlMatcher {
         foreach ($this->routes->toArray() as $route) {
             $route_path = $route->path;
             if ($route_path === $url) {
-                if ($route->method != $this->request->method())
+                if ($route->method != $this->request->getMethod())
                     return UrlMatcher::METHOD_MISMATCH;
 
                 $this->route = $route;
@@ -61,7 +61,7 @@ class UrlMatcher {
 
             // current route can be translated to regex pattern
             if (count($matches) >= 2 && !empty($matches[1])) {
-                if ($route->method != $this->request->method())
+                if ($route->method != $this->request->getMethod())
                     return UrlMatcher::METHOD_MISMATCH;
 
                 array_shift($matches); // remove first element
