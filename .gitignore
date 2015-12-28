@@ -7,4 +7,5 @@
 /composer.lock
 /composer.phar
 /vendor/simplified
+*.phar
 *.zip
