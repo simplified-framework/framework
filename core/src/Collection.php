@@ -3,15 +3,34 @@
 namespace Simplified\Core;
 
 
-class Collection implements \Countable, \ArrayAccess, \Iterator, Arrayable {
-    protected $items;
+class Collection implements Arrayable, ContainerInterface, \Countable,
+                            \ArrayAccess, \Iterator
+{
+    protected $items = array();
+    private $pointer;
+
     public function __construct($items = array()) {
-        $this->items = array();
         $this->pointer = 0;
         if ($items != null && is_array($items)) {
-            foreach ($items as $item)
-                $this->add($item);
+            if (array_keys($items) == $items) {
+                foreach ($items as $item)
+                    $this->add($item);
+            } else {
+                $this->items = $items;
+            }
         }
+    }
+
+    public function has($key) {
+        return isset($this->items[$key]);
+    }
+
+    public function get($key, $default = null) {
+        return $this->has($key) ? $this->items[$key] : $default;
+    }
+
+    public function all() {
+        return $this->items;
     }
 
     public function next() {
@@ -34,7 +53,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator, Arrayable {
         return $this->pointer;
     }
 
-    public function add($arg1, $arg2) {
+    public function add($arg1, $arg2 = null) {
         if (func_num_args() == 1) {
             $key  = $this->count();
             $arg2 = $arg1;

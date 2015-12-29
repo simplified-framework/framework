@@ -11,6 +11,7 @@ namespace Simplified\Http;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Simplified\Core\Collection;
 
 class Request implements RequestInterface {
     private $method;
@@ -21,6 +22,7 @@ class Request implements RequestInterface {
     private $isajax;
     private $headers;
     private $protocolVersion;
+    private $body;
     private static $data;
     private static $instance;
 
@@ -39,9 +41,26 @@ class Request implements RequestInterface {
     }
 
     public function getProtocolVersion() {
+        return $this->protocolVersion;
     }
 
     public function withProtocolVersion($version) {
+        $this->protocolVersion = $version;
+        return $this;
+    }
+
+    public function isSecure() {
+        $isSecure = false;
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+            $isSecure = true;
+        }
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+            $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) &&
+            $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on')
+        {
+            $isSecure = true;
+        }
+        return $isSecure;
     }
 
     public function getHeaders() {
@@ -49,33 +68,47 @@ class Request implements RequestInterface {
     }
 
     public function hasHeader($name) {
+        return $this->headers->has(name);
     }
 
     public function getHeader($name) {
+        return $this->hasHeader($name) ? $this->headers[$name] : null;
     }
 
     public function getHeaderLine($name) {
     }
 
     public function withHeader($name, $value) {
+        $this->headers[$name] = $value;
+        return $this;
     }
 
     public function withAddedHeader($name, $value) {
+        $this->headers[$name] = $value;
+        return $this;
     }
 
     public function withoutHeader($name) {
+        if ($this->hasHeader($name))
+            unset($this->headers[$name]);
+        return $this;
     }
 
     public function getBody() {
+        return $this->body;
     }
 
     public function withBody(StreamInterface $body) {
+        $this->body = $body;
     }
 
     public function getRequestTarget() {
+        return $this->uri->getPath();
     }
 
     public function withRequestTarget($requestTarget) {
+        $this->uri = Uri::fromString($requestTarget);
+        return $this;
     }
 
     public function getMethod() {
@@ -83,6 +116,8 @@ class Request implements RequestInterface {
     }
 
     public function withMethod($method) {
+        $this->method = $method;
+        return $this;
     }
 
     public function getUri() {
@@ -90,10 +125,17 @@ class Request implements RequestInterface {
     }
 
     public function withUri(UriInterface $uri, $preserveHost = false) {
+        $this->uri = $uri;
+        return $this;
     }
 
     private function __construct() {
-        $this->uri = Uri::fromString($_SERVER['REQUEST_URI']);
+        $domain   = $_SERVER['HTTP_HOST'];
+        $port = $_SERVER['SERVER_PORT'];
+        $protocol = $this->isSecure() ? "https" : "http";
+        $uri = $protocol . "://". $domain . (intval($port) != 80 ? ":$port" : "") . $_SERVER['REQUEST_URI'];
+        $this->uri = Uri::fromString($uri);
+
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->querystring = $_SERVER['QUERY_STRING'];
         $this->clientAddress = $_SERVER['REMOTE_ADDR'];
@@ -104,7 +146,7 @@ class Request implements RequestInterface {
             $segments_data = array();
         $this->segments = $segments_data;
 
-        $this->headers = getallheaders();
+        $this->headers = new Collection(getallheaders());
 
         $isAjax = false;
         if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {

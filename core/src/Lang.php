@@ -1,6 +1,7 @@
 <?php
 
 namespace Simplified\Core;
+use Simplified\Config\Config;
 use Simplified\Config\PHPFileLoader;
 
 /* TODO implement fallback when nothing is found in current language, maybe its in the default language */
@@ -11,21 +12,11 @@ class Lang {
     private static $cache = array();
     
 	private function __construct() {
-        $loader = new PHPFileLoader();
-        $params = $loader->load(CONFIG_PATH . 'language.php', array());
+        $language = Config::get('language', 'language');
+        $fallback = Config::get('language', 'default');
 
-        $language = isset($params['language']) ? $params['language'] : null;
-        if ($language == null) {
-            $language = isset($params['default']) ? $params['default'] : null;
-        }
-        
-        $fallback = isset($params['default']) ? $params['default'] : null;
-
-        if ($language == null)
+        if ($language == null || $fallback == null)
             throw new LanguageException('No language variable configured.');
-        
-        if ($fallback == null)
-            throw new LanguageException('No default language variable configured.');
 
         self::$language = I18N_PATH . $language . DIRECTORY_SEPARATOR;
         self::$fallback = I18N_PATH . $fallback . DIRECTORY_SEPARATOR;
@@ -38,18 +29,15 @@ class Lang {
             new self();
         }
 
-        if (strstr($key, ".") === FALSE)
+        if (strstr($key, ".") === false)
             throw new LanguageException('No namespace in translation value found.');
 
         $parts = explode(".", $key);
         $filepath = self::$language . $parts[0] . ".php";
 
         if (!file_exists($filepath)) {
-            print "<p>File doesnt exists: $filepath</p>";
-
         	$filepath = self::$fallback . $parts[0] . ".php";
         	if (!file_exists($filepath)) {
-                print "<p>File doesnt exists: $filepath</p>";
         		throw new LanguageException('Unable to open default translation file at ' . $filepath);
         	}
         }

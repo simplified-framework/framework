@@ -34,6 +34,12 @@ class Kernel {
 
         $request = Request::createFromGlobals();
         $path = $request->getUri()->getPath();
+        $path_parts = explode("/", $path);
+        if ( strstr(end($path_parts), ".") !== false) {
+            $path = dirname($path);
+            $path = str_replace("\\", "/", $path);
+        }
+
         $current_route = null;
         $matches = array();
 
@@ -53,10 +59,17 @@ class Kernel {
                 break;
         }
 
+        // we use a controller, so do checks and throw if something is wrong (class or method)
+        if (!$current_route->controller && !$current_route->closure) {
+            throw new IllegalArgumentException('No controller or Closure was set for route ' . $current_route->path);
+        }
+
+        $params = array();
+        $userObject = null;
         // if we use a closure, call them with the request object
         if ($current_route->closure) {
-        	$content = null;
-            $params = array();
+            $userObject = $current_route->closure;
+
             $ref = new \ReflectionFunction ($current_route->closure);
             if ($ref->getNumberOfParameters() > 0) {
                 $first = $ref->getParameters()[0];
@@ -67,43 +80,36 @@ class Kernel {
                     $params[] = $match;
                 }
             }
-
-            $retval = call_user_func_array($current_route->closure, $params);
-            $this->handleContent($retval);
-            return;
         }
+        else {
+            // handle controller
+            $parts = explode("@", $current_route->controller);
+            $controller = "App\\Controllers\\" . $parts[0];
+            $method = $parts[1];
 
-        // we use a controller, so do checks and throw if something is wrong (class or method)
-        if (!$current_route->controller) {
-            throw new IllegalArgumentException('No controller was set for route ' . $current_route->path);
-        }
+            if (!class_exists($controller))
+                throw new ResourceNotFoundException("Unable to find controller $controller.");
 
-        $parts = explode("@", $current_route->controller);
-        $controller = "App\\Controllers\\" . $parts[0];
-        $method = $parts[1];
+            if (!method_exists($controller, $method))
+                throw new ResourceNotFoundException("Unable to call $controller::$method()");
 
-        if (!class_exists($controller))
-            throw new ResourceNotFoundException("Unable to find controller $controller.");
+            $userObject = array(new $controller, $method);
+            $ref = new \ReflectionClass ($controller);
+            $num_params = $ref->getMethod($method)->getNumberOfParameters();
+            $retval = null;
 
-        if (!method_exists($controller, $method))
-            throw new ResourceNotFoundException("Unable to call $controller::$method()");
-
-        $ref = new \ReflectionClass ($controller);
-        $num_params = $ref->getMethod($method)->getNumberOfParameters();
-        $retval = null;
-        $params = array();
-
-        if ($num_params > 0) {
-            $ref_method = $ref->getMethod($method);
-            $first = $ref_method->getParameters()[0];
-            if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
-                $params[] = $request;
-            foreach ($matches as $match) {
-                $params[] = $match;
+            if ($num_params > 0) {
+                $ref_method = $ref->getMethod($method);
+                $first = $ref_method->getParameters()[0];
+                if ($first->getClass() != null && strstr($first->getClass()->getName(), 'Request'))
+                    $params[] = $request;
+                foreach ($matches as $match) {
+                    $params[] = $match;
+                }
             }
         }
-        $retval = call_user_func_array(array(new $controller, $method), $params);
 
+        $retval = call_user_func_array($userObject, $params);
         $this->handleContent($retval);
     }
 
