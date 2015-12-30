@@ -7,7 +7,7 @@ class Collection implements Arrayable, ContainerInterface, \Countable,
                             \ArrayAccess, \Iterator
 {
     protected $items = array();
-    private $pointer;
+    private $pointer = -1;
 
     public function __construct($items = array()) {
         $this->pointer = 0;
@@ -22,11 +22,20 @@ class Collection implements Arrayable, ContainerInterface, \Countable,
     }
 
     public function has($key) {
-        return isset($this->items[$key]);
+        return isset($this->items[$key]) ||
+            in_array($key, $this->items);
     }
 
-    public function get($key, $default = null) {
+    public function get($key, $default = false) {
         return $this->has($key) ? $this->items[$key] : $default;
+    }
+
+    public function first() {
+        return $this->get(0);
+    }
+
+    public function last() {
+        return end($this->items);
     }
 
     public function all() {
@@ -34,11 +43,16 @@ class Collection implements Arrayable, ContainerInterface, \Countable,
     }
 
     public function next() {
-        $this->pointer++;
+        if ($this->has($this->pointer++)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function current() {
-        return $this->items[$this -> pointer];
+        return $this->has($this->pointer) ?
+            $this->items[$this->pointer] : false;
     }
 
     public function rewind() {
@@ -46,7 +60,7 @@ class Collection implements Arrayable, ContainerInterface, \Countable,
     }
 
     public function valid() {
-        return isset($this->items[$this -> pointer]);
+        return $this->has($this->pointer);
     }
 
     public function key() {
@@ -55,13 +69,12 @@ class Collection implements Arrayable, ContainerInterface, \Countable,
 
     public function add($arg1, $arg2 = null) {
         if (func_num_args() == 1) {
-            $key  = $this->count();
-            $arg2 = $arg1;
+            $this->items[] = $arg1;
         }
-        else
+        else {
             $key = $arg1;
-
-        $this->items[$key] = $arg2;
+            $this->items[$key] = $arg2;
+        }
     }
 
     public function count() {
@@ -77,7 +90,7 @@ class Collection implements Arrayable, ContainerInterface, \Countable,
     }
 
     public function offsetGet($offset) {
-        return isset($this->items[$offset]) ? $this->items[$offset] : null;
+        return $this->get($offset);
     }
 
     public function offsetSet($offset ,$value) {

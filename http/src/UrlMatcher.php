@@ -10,7 +10,6 @@ namespace Simplified\Http;
 use Simplified\Core\Collection;
 
 class UrlMatcher {
-    // TODO define constants to reflect errors
     const MATCH_FOUND = 1;
     const METHOD_MISMATCH = 2;
     const UNKNOWN_RESOURCE = 3;
@@ -46,17 +45,18 @@ class UrlMatcher {
                     $pattern = str_replace("{".$key."}", "($val)", $pattern);
                 }
             } else {
-                $pattern = preg_replace('/\{[a-zA-Z]+\}/', "([a-zA-Z]+)", $pattern);
+                $pattern = preg_replace('/\{[a-zA-Z-_\?{,1}]+\}/', "([a-zA-Z]+)", $pattern);
             }
 
             // compile pattern
-            if (0 === preg_match('/'.$pattern.'/', $url, $matches)) {
-                return UrlMatcher::UNKNOWN_RESOURCE;
-            }
+            $match = preg_match('/'.$pattern.'/', $url, $matches);
 
-            // compile pattern
-            if (FALSE === preg_match('/'.$pattern.'/', $url, $matches)) {
-                return UrlMatcher::UNKNOWN_RESOURCE;
+            if (0 === $match || false == $match) {
+                if (strstr($route_path, "?}") === false) {
+                    return UrlMatcher::UNKNOWN_RESOURCE;
+                } else {
+                    preg_match('/([a-zA-Z-_\/\?{,1}]+)/', $url, $matches);
+                }
             }
 
             // current route can be translated to regex pattern

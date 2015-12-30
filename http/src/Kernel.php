@@ -34,11 +34,6 @@ class Kernel {
 
         $request = Request::createFromGlobals();
         $path = $request->getUri()->getPath();
-        $path_parts = explode("/", $path);
-        if ( strstr(end($path_parts), ".") !== false) {
-            $path = dirname($path);
-            $path = str_replace("\\", "/", $path);
-        }
 
         $current_route = null;
         $matches = array();

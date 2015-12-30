@@ -24,7 +24,9 @@
 		  "Simplified\\Orm\\":"orm/src/",
           "Simplified\\Session\\":"session/src/",
           "Simplified\\Log\\":"log/src",
-          "Simplified\\Console\\":"console/src"
+          "Simplified\\Console\\":"console/src",
+          "Simplified\\Asset":"asset/src",
+          "Simplified\\FileSystem":"filesystem/src"
         },
 		"files": [
 			"http/src/helper.php"
