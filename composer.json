@@ -25,7 +25,7 @@
           "Simplified\\Session\\":"session/src/",
           "Simplified\\Log\\":"log/src",
           "Simplified\\Console\\":"console/src",
-          "Simplified\\Asset":"asset/src",
+          "Simplified\\Asset\\":"asset/src",
           "Simplified\\FileSystem\\":"filesystem/src"
         },
 		"files": [
