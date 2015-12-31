@@ -11,8 +11,9 @@ namespace Simplified\FileSystem;
 use Simplified\Core\Collection;
 use Simplified\Core\IllegalArgumentException;
 
-class Directory extends Collection implements FinderContainer {
+class Directory extends \SplFileInfo implements FinderContainer, FinderItem {
     private $path;
+    private $items;
 
     public static function create($path, $mode = 777, $recursive = true) {
         if (mkdir($path, $mode, $recursive)) {
@@ -27,13 +28,14 @@ class Directory extends Collection implements FinderContainer {
     }
 
     public function __construct($path) {
-        parent::__construct();
+        parent::__construct($path);
         if (PHP_OS == "WINNT") {
             if (strpos($path, ":") == 1) {
                 $path = substr($path, 2, strlen($path));
             }
         }
         $path = str_replace("\\","/", $path);
+        $this->items = new Collection();
 
         $this->path = $path;
         if ($this->exists()) {
@@ -41,7 +43,7 @@ class Directory extends Collection implements FinderContainer {
                 $handle = opendir($this->path());
                 while (false !== ($entry = readdir($handle))) {
                     if ($entry != "." && $entry != "..") {
-                        $this->add($entry);
+                        $this->items->add($entry);
                     }
                 }
                 closedir($handle);
@@ -88,12 +90,12 @@ class Directory extends Collection implements FinderContainer {
     }
 
     public function files() {
-        if ($this->count() == 0)
+        if ($this->items->count() == 0)
             return new Collection();
 
         $files = new Collection();
         if ($this->exists()) {
-            foreach ($this->all() as $entry) {
+            foreach ($this->items->all() as $entry) {
                 $path = $this->absolutePath() . DIRECTORY_SEPARATOR . $entry;
                 if (is_file($path)) {
                     $files->add(new File($path));
@@ -104,12 +106,12 @@ class Directory extends Collection implements FinderContainer {
     }
 
     public function directories() {
-        if ($this->count() == 0)
+        if ($this->items->count() == 0)
             return new Collection();
 
         $dirs = new Collection();
         if ($this->exists()) {
-            foreach ($this->all() as $entry) {
+            foreach ($this->items->all() as $entry) {
                 $path = $this->absolutePath() . DIRECTORY_SEPARATOR . $entry;
                 if (is_dir($path)) {
                     $dirs->add(new Directory($path));
@@ -121,5 +123,17 @@ class Directory extends Collection implements FinderContainer {
 
     public function exists() {
         return is_dir($this->path);
+    }
+
+    public function id() {
+        return md5($this->path() ."@" . __CLASS__);
+    }
+
+    public function get($id) {
+        return $this->items->get($id);
+    }
+
+    public function has($id) {
+        return $this->items->has($id);
     }
 }

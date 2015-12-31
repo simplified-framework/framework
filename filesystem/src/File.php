@@ -9,7 +9,7 @@
 namespace Simplified\FileSystem;
 
 
-class File extends \SplFileInfo {
+class File extends \SplFileInfo implements FinderItem {
     public function __construct($path) {
         if (PHP_OS == "WINNT") {
             if (strpos($path, ":") == 1) {
@@ -18,5 +18,13 @@ class File extends \SplFileInfo {
         }
         $path = str_replace("\\","/", $path);
         parent::__construct($path);
+    }
+
+    public function name() {
+        return $this->getFilename();
+    }
+
+    public function id() {
+        return md5($this->getPath() . "/" . $this->getFilename() ."@" . __CLASS__);
     }
 }

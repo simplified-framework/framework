@@ -8,6 +8,11 @@
 
 namespace Simplified\FileSystem;
 
+use Simplified\Core\Collection;
+use Simplified\FileSystem\Filter\DateTimeFilter;
+use Simplified\FileSystem\Filter\NameFilter;
+use Simplified\FileSystem\Filter\SizeFilter;
+
 class Finder implements \Iterator {
     const TYPE_ALL  = 1;
     const TYPE_FILE = 2;
@@ -17,32 +22,13 @@ class Finder implements \Iterator {
     private $container;
     private $content;
     private $type;
+    private $filters;
+    private $items;
 
     public function __construct() {
         $this->type = Finder::TYPE_ALL;
         $this->position = 0;
-    }
-
-    public function files() {
-        $this->type = Finder::TYPE_FILE;
-        return $this;
-    }
-
-    public function directories() {
-        $this->type = Finder::TYPE_DIRECTORY;
-        return $this;
-    }
-
-    public function name() {
-        return $this;
-    }
-
-    public function date(\DateTime $date) {
-        return $this;
-    }
-
-    public function size($size) {
-        return $this;
+        $this->items = array();
     }
 
     public function in(FinderContainer $container) {
@@ -50,8 +36,80 @@ class Finder implements \Iterator {
         return $this;
     }
 
+    public function files() {
+        if (!$this->container)
+            throw new FinderException("No container was set");
+
+        $this->type = Finder::TYPE_FILE;
+        $items = $this->container->files();
+        foreach ($items as $item) {
+            $this->items[] = array($item->id() => $item);
+        }
+        return $this;
+    }
+
+    public function directories() {
+        if (!$this->container)
+            throw new FinderException("No container was set");
+
+        $this->type = Finder::TYPE_DIRECTORY;
+        $items = $this->container->directories();
+        foreach ($items as $item) {
+            $this->items[] = array($item->id() => $item);
+        }
+        return $this;
+    }
+
+    public function name($expr) {
+        $filter = new NameFilter($expr);
+        $filtered = array();
+        foreach ($this->items as $key => $item) {
+            if ($filter->filter(end($item))) {
+                $filtered[] = $item;
+            }
+        }
+        $this->items = $filtered;
+
+        return $this;
+    }
+
+    public function date($expr) {
+        $filter = new DateTimeFilter($expr);
+        $filtered = array();
+        foreach ($this->items as $key => $item) {
+            if ($filter->filter(end($item))) {
+                $filtered[] = $item;
+            }
+        }
+        $this->items = $filtered;
+        return $this;
+    }
+
+    public function size($expr) {
+        $filter = new SizeFilter($expr);
+        $filtered = array();
+        foreach ($this->items as $key => $item) {
+            if ($filter->filter(end($item))) {
+                $filtered[] = $item;
+            }
+        }
+        $this->items = $filtered;
+        return $this;
+    }
+
+    public function addFilter(FinderFilter $filter) {
+        $filtered = array();
+        foreach ($this->items as $key => $item) {
+            if ($filter->filter(end($item))) {
+                $filtered[] = $item;
+            }
+        }
+        $this->items = $filtered;
+        return $this;
+    }
+
     public function current() {
-        return $this->content->get($this->position);
+        return $this->items[$this->position];
     }
 
     public function next() {
@@ -63,22 +121,10 @@ class Finder implements \Iterator {
     }
 
     public function valid() {
-        return $this->content->has($this->position);
+        return isset($this->items[$this->position]);
     }
 
     public function rewind() {
-        $this->content = null;
-        switch ($this->type) {
-            case Finder::TYPE_ALL:
-                $this->content = $this->container->all();
-                break;
-            case Finder::TYPE_DIRECTORY:
-                $this->content = $this->container->directories();
-                break;
-            case Finder::TYPE_FILE:
-                $this->content = $this->container->files();
-                break;
-        }
         $this->position = 0;
     }
 }
