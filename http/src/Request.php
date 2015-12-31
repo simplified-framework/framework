@@ -129,6 +129,10 @@ class Request implements RequestInterface {
         return $this;
     }
 
+    public function isAjax() {
+        return $this->isajax;
+    }
+
     private function __construct() {
         $domain   = $_SERVER['HTTP_HOST'];
         $port = $_SERVER['SERVER_PORT'];

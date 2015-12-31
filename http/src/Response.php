@@ -133,6 +133,9 @@ class Response {
     }
 
     public function sendHeaders() {
+        if (headers_sent())
+            return;
+
         $status = $this->status . " " . $this->statusHeaders[$this->status];
         header($this->protocolVersion . " " . $status, true);
         header('Last-Modified: ' . $this->lastModified->format(DATE_COOKIE));
