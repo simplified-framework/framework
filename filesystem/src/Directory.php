@@ -89,6 +89,14 @@ class Directory extends \SplFileInfo implements FinderContainer, FinderItem {
         return basename($this->path());
     }
 
+    public function size() {
+        return $this->getSize();
+    }
+
+    public function timestamp() {
+        return $this->getMTime();
+    }
+
     public function files() {
         if ($this->items->count() == 0)
             return new Collection();

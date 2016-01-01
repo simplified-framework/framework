@@ -16,7 +16,7 @@ class SizeFilter extends FinderFilter {
         if ( !is_string($this->condition()) || is_null($this->condition()) )
             throw new FilterException("Condition must be a string");
 
-        $size = $file->getSize();
+        $size = $file->size();
 
         $patterns   = array();
         $patterns[] = '(\<\=)[\s]+?([\d]+)'; // <=

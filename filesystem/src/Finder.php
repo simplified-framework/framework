@@ -14,9 +14,10 @@ use Simplified\FileSystem\Filter\NameFilter;
 use Simplified\FileSystem\Filter\SizeFilter;
 
 class Finder implements \Iterator {
-    const TYPE_ALL  = 1;
-    const TYPE_FILE = 2;
-    const TYPE_DIRECTORY  = 3;
+    const SORT_NAME = 100;
+    const SORT_DATE = 200;
+    const SORT_SIZE = 300;
+    const SORT_TYPE = 400;
 
     private $position;
     private $container;
@@ -26,7 +27,6 @@ class Finder implements \Iterator {
     private $items;
 
     public function __construct() {
-        $this->type = Finder::TYPE_ALL;
         $this->position = 0;
         $this->items = array();
     }
@@ -40,7 +40,6 @@ class Finder implements \Iterator {
         if (!$this->container)
             throw new FinderException("No container was set");
 
-        $this->type = Finder::TYPE_FILE;
         $items = $this->container->files();
         foreach ($items as $item) {
             $this->items[] = array($item->id() => $item);
@@ -52,7 +51,6 @@ class Finder implements \Iterator {
         if (!$this->container)
             throw new FinderException("No container was set");
 
-        $this->type = Finder::TYPE_DIRECTORY;
         $items = $this->container->directories();
         foreach ($items as $item) {
             $this->items[] = array($item->id() => $item);
@@ -108,8 +106,29 @@ class Finder implements \Iterator {
         return $this;
     }
 
+    public function sortBy($mode) {
+        switch ($mode) {
+            case Finder::SORT_TYPE:
+                usort($this->items, array($this, 'sortByType'));
+                break;
+            case Finder::SORT_DATE:
+                usort($this->items, array($this, 'sortByDate'));
+                break;
+            case Finder::SORT_NAME:
+                usort($this->items, array($this, 'sortByName'));
+                break;
+            case Finder::SORT_SIZE:
+                usort($this->items, array($this, 'sortBySize'));
+                break;
+            default:
+                throw new FinderException("Invalid sort argument");
+        }
+
+        return $this;
+    }
+
     public function current() {
-        return $this->items[$this->position];
+        return end($this->items[$this->position]);
     }
 
     public function next() {
@@ -126,5 +145,31 @@ class Finder implements \Iterator {
 
     public function rewind() {
         $this->position = 0;
+    }
+
+    public function __call($name, $arguments) {
+        if (strtolower($name) == "sortbyname") {
+            $a = end($arguments[0]);
+            $b = end($arguments[1]);
+            return strcmp($a->name(), $b->name());
+        }
+
+        if (strtolower($name) == "sortbysize") {
+            $a = end($arguments[0])->size();
+            $b = end($arguments[1])->size();
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        }
+
+        if (strtolower($name) == "sortbydate") {
+            $a = end($arguments[0])->timestamp();
+            $b = end($arguments[1])->timestamp();
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        }
     }
 }

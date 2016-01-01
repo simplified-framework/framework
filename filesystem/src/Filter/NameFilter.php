@@ -18,9 +18,9 @@ class NameFilter extends FinderFilter {
 
         $pattern = str_replace('*', '[a-zA-Z0-9\s\w\-\_\.]+', $this->condition());
         $pattern = str_replace('.', '\\.', $pattern);
-        preg_match('/'.$pattern.'/', $file->getFilename(), $matches);
+        preg_match('/'.$pattern.'/', $file->name(), $matches);
 
-        if (isset($matches[0]) && $matches[0] == $file->getFilename()) {
+        if (isset($matches[0]) && $matches[0] == $file->name()) {
             return true;
         }
 

@@ -60,6 +60,23 @@ class DateTimeFilter extends FinderFilter {
                     if (isset($m[0]) && $m[0] == $matches2[2][0]) {
                         $date = $matches2[2][0] . "-01-01 00:00:00";
                         $val  = strtotime($date);
+                        $filetime = strtotime(date("Y-01-01 00:00:00 ", $filetime));
+                    }
+                }
+
+                if (preg_match('/[\d]{4,4}\-[\d]{2,2}/', $matches2[2][0], $m)) {
+                    if (isset($m[0]) && $m[0] == $matches2[2][0]) {
+                        $date = $matches2[2][0] . "-01 00:00:00";
+                        $val  = strtotime($date);
+                        $filetime = strtotime(date("Y-m-01 00:00:00 ", $filetime));
+                    }
+                }
+
+                if (preg_match('/[\d]{4,4}\-[\d]{2,2}\-[\d]{2,2}/', $matches2[2][0], $m)) {
+                    if (isset($m[0]) && $m[0] == $matches2[2][0]) {
+                        $date = $matches2[2][0] . " 00:00:00";
+                        $val  = strtotime($date);
+                        $filetime = strtotime(date("Y-m-d 00:00:00 ", $filetime));
                     }
                 }
 

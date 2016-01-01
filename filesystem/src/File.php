@@ -25,6 +25,14 @@ class File extends \SplFileInfo implements FinderItem {
     }
 
     public function id() {
-        return md5($this->getPath() . "/" . $this->getFilename() ."@" . __CLASS__);
+        return md5($this->getPath() . "/" . $this->name() ."@" . __CLASS__);
+    }
+
+    public function size() {
+        return $this->getSize();
+    }
+
+    public function timestamp() {
+        return $this->getMTime();
     }
 }
