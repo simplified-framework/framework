@@ -8,7 +8,6 @@
 
 namespace Simplified\FileSystem;
 
-use Simplified\Core\Collection;
 use Simplified\FileSystem\Filter\DateTimeFilter;
 use Simplified\FileSystem\Filter\NameFilter;
 use Simplified\FileSystem\Filter\SizeFilter;
@@ -21,9 +20,6 @@ class Finder implements \Iterator {
 
     private $position;
     private $container;
-    private $content;
-    private $type;
-    private $filters;
     private $items;
 
     public function __construct() {
@@ -59,32 +55,24 @@ class Finder implements \Iterator {
     }
 
     public function name($expr) {
-        $filter = new NameFilter($expr);
-        $filtered = array();
-        foreach ($this->items as $key => $item) {
-            if ($filter->filter(end($item))) {
-                $filtered[] = $item;
-            }
-        }
-        $this->items = $filtered;
-
-        return $this;
+        return $this->filter(
+            new NameFilter($expr)
+        );
     }
 
     public function date($expr) {
-        $filter = new DateTimeFilter($expr);
-        $filtered = array();
-        foreach ($this->items as $key => $item) {
-            if ($filter->filter(end($item))) {
-                $filtered[] = $item;
-            }
-        }
-        $this->items = $filtered;
-        return $this;
+        return $this->filter(
+            new DateTimeFilter($expr)
+        );
     }
 
     public function size($expr) {
-        $filter = new SizeFilter($expr);
+        return $this->filter(
+            new SizeFilter($expr)
+        );
+    }
+
+    public function filter(FinderFilter $filter) {
         $filtered = array();
         foreach ($this->items as $key => $item) {
             if ($filter->filter(end($item))) {
@@ -95,18 +83,7 @@ class Finder implements \Iterator {
         return $this;
     }
 
-    public function addFilter(FinderFilter $filter) {
-        $filtered = array();
-        foreach ($this->items as $key => $item) {
-            if ($filter->filter(end($item))) {
-                $filtered[] = $item;
-            }
-        }
-        $this->items = $filtered;
-        return $this;
-    }
-
-    public function sortBy($mode) {
+    public function sort($mode) {
         if ($mode instanceof \Closure) {
             usort($this->items, $mode);
             return $this;
@@ -114,21 +91,65 @@ class Finder implements \Iterator {
 
         switch ($mode) {
             case Finder::SORT_TYPE:
-                usort($this->items, array($this, 'sortByType'));
-                break;
-            case Finder::SORT_DATE:
-                usort($this->items, array($this, 'sortByDate'));
-                break;
-            case Finder::SORT_NAME:
-                usort($this->items, array($this, 'sortByName'));
-                break;
-            case Finder::SORT_SIZE:
-                usort($this->items, array($this, 'sortBySize'));
-                break;
-            default:
-                throw new FinderException("Invalid sort argument");
-        }
+            case 'type':
+                return $this->sortByType();
 
+            case Finder::SORT_DATE:
+            case 'date':
+                return $this->sortByDate();
+
+            case Finder::SORT_NAME:
+            case 'name':
+                return $this->sortByName();
+
+            case Finder::SORT_SIZE:
+            case 'size':
+                return $this->sortBySize();
+
+            default:
+                throw new FinderException(sprintf("Invalid sort argument %s", $mode));
+        }
+    }
+
+    public function sortByName() {
+        usort($this->items, function($a, $b) {
+            $a = end($a)->name();
+            $b = end($b)->name();
+            return strcmp($a, $b);
+        });
+        return $this;
+    }
+
+    public function sortBySize() {
+        usort($this->items, function($a, $b) {
+            $a = end($a)->size();
+            $b = end($b)->size();
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        });
+        return $this;
+    }
+
+    public function sortByDate() {
+        usort($this->items, function($a, $b) {
+            $a = end($a)->timestamp();
+            $b = end($b)->timestamp();
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        });
+        return $this;
+    }
+
+    public function sortByType() {
+        usort($this->items, function($a, $b) {
+            $a = end($a)->isDir() ? 'dir' : 'file';
+            $b = end($b)->isDir() ? 'dir' : 'file';
+            return strcmp($a, $b);
+        });
         return $this;
     }
 
@@ -150,31 +171,5 @@ class Finder implements \Iterator {
 
     public function rewind() {
         $this->position = 0;
-    }
-
-    public function __call($name, $arguments) {
-        if (strtolower($name) == "sortbyname") {
-            $a = end($arguments[0]);
-            $b = end($arguments[1]);
-            return strcmp($a->name(), $b->name());
-        }
-
-        if (strtolower($name) == "sortbysize") {
-            $a = end($arguments[0])->size();
-            $b = end($arguments[1])->size();
-            if ($a == $b) {
-                return 0;
-            }
-            return ($a < $b) ? -1 : 1;
-        }
-
-        if (strtolower($name) == "sortbydate") {
-            $a = end($arguments[0])->timestamp();
-            $b = end($arguments[1])->timestamp();
-            if ($a == $b) {
-                return 0;
-            }
-            return ($a < $b) ? -1 : 1;
-        }
     }
 }
