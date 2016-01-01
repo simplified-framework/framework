@@ -14,21 +14,21 @@
       "symfony/console":"2.x",
       "symfony/finder":"3.x",
       "symfony/debug":"3.x",
-      "doctrine/inflector":"1.x"
+      "doctrine/inflector":"1.x",
+      "nesbot/carbon":"1.*",
+      "simplified/twigbridge":"1.0.*",
+      "simplified/html":"1.0.*"
     },
     "autoload": {
           "psr-4": {
+          "Simplified\\Asset\\":"asset/src",
 		  "Simplified\\Config\\":"config/src/",
-		  "Simplified\\Debug\\":"debug/src/",
+          "Simplified\\Console\\":"console/src",
 		  "Simplified\\Core\\":"core/src/",
 		  "Simplified\\Database\\":"database/src/",
 		  "Simplified\\Http\\":"http/src/",
-		  "Simplified\\Orm\\":"orm/src/",
-          "Simplified\\Session\\":"session/src/",
           "Simplified\\Log\\":"log/src",
-          "Simplified\\Console\\":"console/src",
-          "Simplified\\Asset\\":"asset/src",
-          "Simplified\\FileSystem\\":"filesystem/src"
+          "Simplified\\Session\\":"session/src/"
         },
 		"files": [
 			"http/src/helper.php"
