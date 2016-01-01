@@ -12,6 +12,8 @@
       "psr/log":"1.0.x",
       "psr/http-message":"1.0.x",
       "symfony/console":"2.x",
+      "symfony/finder":"3.x",
+      "symfony/debug":"3.x",
       "doctrine/inflector":"1.x"
     },
     "autoload": {

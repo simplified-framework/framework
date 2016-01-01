@@ -3,8 +3,8 @@
 namespace Simplified\Http;
 use Simplified\Config\Config;
 use Simplified\Core\IllegalArgumentException;
-use Simplified\Debug\Debug;
 use Simplified\Session\SessionException;
+use Symfony\Component\Debug\Debug;
 
 define ("BASE_PATH",   dirname(dirname($_SERVER['SCRIPT_FILENAME'])) . DIRECTORY_SEPARATOR);
 define ("VENDOR_PATH", BASE_PATH . "vendor" . DIRECTORY_SEPARATOR);
@@ -17,7 +17,7 @@ define ("RESOURCES_VENDOR_PATH", RESOURCES_PATH . "vendor" . DIRECTORY_SEPARATOR
 define ("CONFIG_PATH", APP_PATH . "config" . DIRECTORY_SEPARATOR);
 
 // handle debug
-Debug::handleDebug();
+Debug::enable();
 
 // load configured routes
 require CONFIG_PATH . 'routes.php';
