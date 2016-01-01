@@ -8,7 +8,6 @@
 
 namespace Simplified\FileSystem;
 
-
 interface FinderItem {
     public function id();
     public function name();

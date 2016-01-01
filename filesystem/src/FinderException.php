@@ -8,6 +8,5 @@
 
 namespace Simplified\FileSystem;
 
-
 class FinderException extends \Exception {
 }

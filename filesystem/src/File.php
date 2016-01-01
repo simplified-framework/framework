@@ -8,7 +8,6 @@
 
 namespace Simplified\FileSystem;
 
-
 class File extends \SplFileInfo implements FinderItem {
     public function __construct($path) {
         if (PHP_OS == "WINNT") {

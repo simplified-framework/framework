@@ -8,6 +8,5 @@
 
 namespace Simplified\FileSystem\Filter;
 
-
 class FilterException extends \Exception {
 }

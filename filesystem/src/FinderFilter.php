@@ -8,7 +8,6 @@
 
 namespace Simplified\FileSystem;
 
-
 abstract class FinderFilter {
     private $condition;
     public function __construct($condition) {

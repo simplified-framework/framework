@@ -107,6 +107,11 @@ class Finder implements \Iterator {
     }
 
     public function sortBy($mode) {
+        if ($mode instanceof \Closure) {
+            usort($this->items, $mode);
+            return $this;
+        }
+
         switch ($mode) {
             case Finder::SORT_TYPE:
                 usort($this->items, array($this, 'sortByType'));
