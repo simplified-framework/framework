@@ -19,6 +19,7 @@
       "symfony/validator":"3.x",
       "nesbot/carbon":"1.*",
       "intervention/image":"^2.3",
+      "simplified/view":"1.0.*",
       "simplified/twigbridge":"1.0.*",
       "simplified/html":"1.0.*"
     },
