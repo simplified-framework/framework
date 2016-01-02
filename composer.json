@@ -11,13 +11,14 @@
     "require": {
       "psr/log":"1.0.x",
       "psr/http-message":"1.0.x",
+      "doctrine/inflector":"1.x",
       "symfony/console":"2.x",
       "symfony/finder":"3.x",
       "symfony/debug":"3.x",
       "symfony/filesystem":"3.x",
       "symfony/validator":"3.x",
-      "doctrine/inflector":"1.x",
       "nesbot/carbon":"1.*",
+      "intervention/image":"^2.3",
       "simplified/twigbridge":"1.0.*",
       "simplified/html":"1.0.*"
     },
