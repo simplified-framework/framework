@@ -30,9 +30,9 @@ class Config {
                 return $default;
 
             $records = self::$loader->load(CONFIG_PATH . $context . ".php");
-            foreach ($records as $record) {
-                $k = "$context.$key";
-                self::$cache->set($k, $record);
+            foreach ($records as $k => $v) {
+                $record = "$context.$k";
+                self::$cache->set($record, $v);
             }
         }
 
