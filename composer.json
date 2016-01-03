@@ -18,6 +18,8 @@
       "symfony/filesystem":"3.x",
       "symfony/validator":"3.x",
       "nesbot/carbon":"1.*",
+      "jms/serializer":"1.*",
+      "phpcollection/phpcollection":"0.*",
       "simplified/view":"1.0.*",
       "simplified/forms":"1.0.*",
 	  "simplified/session":"1.0.*",
