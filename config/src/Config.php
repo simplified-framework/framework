@@ -8,7 +8,7 @@
 
 namespace Simplified\Config;
 
-use Simplified\Cache\ApcCache;
+use Simplified\Cache\MemoryCache;
 
 class Config {
     private static $loader;
@@ -16,7 +16,7 @@ class Config {
 
     public function __construct() {
         self::$loader = new PHPFileLoader();
-        self::$cache  = new ApcCache();
+        self::$cache  = new MemoryCache();
     }
 
     public static function get($key, $default = null) {
