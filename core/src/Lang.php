@@ -12,8 +12,8 @@ class Lang {
     private static $cache = array();
     
 	private function __construct() {
-        $language = Config::get('language', 'language');
-        $fallback = Config::get('language', 'default');
+        $language = Config::get('language.language');
+        $fallback = Config::get('language.default');
 
         if ($language == null || $fallback == null)
             throw new LanguageException('No language variable configured.');
