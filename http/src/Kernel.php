@@ -112,7 +112,7 @@ class Kernel {
         if (headers_sent())
             throw new SessionException('Unable to start session handling, headers already sent.');
 
-        $provider = Config::get('providers', 'session');
+        $provider = Config::get('providers.session');
         if ($provider) {
             if (!class_exists($provider))
                 throw new IllegalArgumentException('Unable to set session provider to ' . $provider);

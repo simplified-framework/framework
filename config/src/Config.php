@@ -24,7 +24,8 @@ class Config {
             new self();
 
         if (!self::$cache->has($key)) {
-            $context = end(explode(".", $key));
+            $parts = explode(".", $key);
+            $context = $parts[0];
             if (!file_exists(CONFIG_PATH . $context . ".php"))
                 return $default;
 
