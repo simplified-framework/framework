@@ -42,4 +42,15 @@ class Config {
 
         return $default;
     }
+
+    public static function getAll($context) {
+        if (self::$loader == null)
+            new self();
+
+        if (!file_exists(CONFIG_PATH . $context . ".php"))
+            return array();
+
+        $records = self::$loader->load(CONFIG_PATH . $context . ".php");
+        return $records;
+    }
 }
