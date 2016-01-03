@@ -23,6 +23,7 @@ class Request implements RequestInterface {
     private $headers;
     private $protocolVersion;
     private $body;
+    private $files;
     private static $data;
     private static $instance;
 
@@ -133,6 +134,18 @@ class Request implements RequestInterface {
         return $this->isajax;
     }
 
+    public function getUploadedFiles() {
+        $files = array();
+        foreach ($this->files as $file) {
+            $files[] = $file;
+        }
+        return $files;
+    }
+
+    public function getUploadedFile($fieldname) {
+        return isset($this->files[$fieldname]) ? $this->files[$fieldname] : null;
+    }
+
     private function __construct() {
         $domain   = $_SERVER['HTTP_HOST'];
         $port = $_SERVER['SERVER_PORT'];
@@ -161,7 +174,37 @@ class Request implements RequestInterface {
         $data = array();
         $data = array_merge($data, $_GET);
         $data = array_merge($data, $_POST);
-        $data = array_merge($data, $_FILES);
-        self::$data = $data;
+
+        $files = array();
+        if (is_array($_FILES)) {
+            foreach (array_keys($_FILES) as $key) {
+                if (is_array($_FILES[$key]['tmp_name'])) {
+                    $count = count($_FILES[$key]['tmp_name']);
+                    $files[$key] = array();
+                    for($i = 0; $i < $count; $i++) {
+                        $files[$key][] = new UploadedFile(
+                            array(
+                                'fieldname' => $key,
+                                'tmp_filename' => $_FILES[$key]['tmp_name'][$i],
+                                'origin_filename' => $_FILES[$key]['name'][$i],
+                                'file_type' => $_FILES[$key]['type'][$i],
+                                'upload_error' => $_FILES[$key]['error'][$i]
+                            )
+                        );
+                    }
+                } else {
+                    $files[$key] = new UploadedFile(
+                        array(
+                            'fieldname' => $key,
+                            'tmp_filename' => $_FILES[$key]['tmp_name'],
+                            'origin_filename' => $_FILES[$key]['name'],
+                            'file_type' => $_FILES[$key]['type'],
+                            'upload_error' => $_FILES[$key]['error']
+                        )
+                    );
+                }
+            }
+        }
+        $this->files = $files;
     }
 }
