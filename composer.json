@@ -20,6 +20,7 @@
       "nesbot/carbon":"1.*",
       "jms/serializer":"1.*",
       "phpcollection/phpcollection":"0.*",
+      "swiftmailer/swiftmailer":"5.*",
       "simplified/view":"1.0.*",
       "simplified/forms":"1.0.*",
 	  "simplified/session":"1.0.*",
