@@ -88,7 +88,8 @@ class Kernel {
             if (!method_exists($controller, $method))
                 throw new ResourceNotFoundException("Unable to call $controller::$method()");
 
-            $userObject = array(new $controller, $method);
+            $instance = new $controller;
+            $userObject = array($instance, $method);
             $ref = new \ReflectionClass ($controller);
             $num_params = $ref->getMethod($method)->getNumberOfParameters();
             $retval = null;
@@ -102,6 +103,9 @@ class Kernel {
                     $params[] = $match;
                 }
             }
+
+            if ($instance instanceof BaseController)
+                $instance->onBefore();
         }
 
         $retval = call_user_func_array($userObject, $params);
