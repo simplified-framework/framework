@@ -174,6 +174,7 @@ class Request implements RequestInterface {
         $data = array();
         $data = array_merge($data, $_GET);
         $data = array_merge($data, $_POST);
+        self::$data = $data;
 
         $files = array();
         if (is_array($_FILES)) {
