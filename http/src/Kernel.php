@@ -130,7 +130,6 @@ class Kernel {
 
     private function handleContent($content) {
         $output = ob_get_clean ();
-
         if ($content != null) {
             if (is_string($content)) {
                 (new Response($output . $content))->send();
@@ -143,6 +142,10 @@ class Kernel {
                         (new Response(json_encode($content), 200, array('Content-Type' => 'application/json')))->send();
                     }
                 }
+            }
+        } else {
+            if ($output) {
+                (new Response($output))->send();
             }
         }
     }
