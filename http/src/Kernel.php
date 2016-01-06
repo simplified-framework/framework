@@ -129,14 +129,11 @@ class Kernel {
     }
 
     private function handleContent($content) {
-        $clean_content = ob_get_clean ();
-        if ($clean_content != null) {
-            (new Response($clean_content))->send();
-        }
+        $output = ob_get_clean ();
 
         if ($content != null) {
             if (is_string($content)) {
-                (new Response($content))->send();
+                (new Response($output . $content))->send();
             }
             else {
                 if ($content instanceof Response) {
