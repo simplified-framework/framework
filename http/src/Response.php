@@ -95,7 +95,7 @@ class Response {
         $this->setContent($content);
         $this->setStatus($status);
         $this->setLastModified(new DateTime());
-        $this->addHeader("Content-Type", "text/html");
+        $this->addHeader("Content-Type", "text/html; utf-8");
         $this->headers = array_merge($this->headers, $headers);
     }
 

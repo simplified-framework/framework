@@ -132,7 +132,7 @@ class Kernel {
         $output = ob_get_clean ();
         if ($content != null) {
             if (is_string($content)) {
-                (new Response($output . $content, 200, array("Content-Type" => "text/html; charset=utf-8")))->send();
+                (new Response($output . $content))->send();
             }
             else {
                 if ($content instanceof Response) {
@@ -145,7 +145,7 @@ class Kernel {
             }
         } else {
             if ($output) {
-                (new Response($output, 200, array("Content-Type" => "text/html; charset=utf-8")))->send();
+                (new Response($output))->send();
             }
         }
     }
