@@ -24,7 +24,7 @@ require CONFIG_PATH . 'routes.php';
 
 class Kernel {
     public function handleRequest() {
-    	ob_start ();
+        ob_start ();
 
         $this->startSession();
 
@@ -132,20 +132,20 @@ class Kernel {
         $output = ob_get_clean ();
         if ($content != null) {
             if (is_string($content)) {
-                (new Response($output . $content))->send();
+                (new Response($output . $content, 200, array("Content-Type" => "text/html; charset=utf-8")))->send();
             }
             else {
                 if ($content instanceof Response) {
                     $content->send();
                 } else {
                     if (is_array($content)) {
-                        (new Response(json_encode($content), 200, array('Content-Type' => 'application/json')))->send();
+                        (new Response(json_encode($content), 200, array('Content-Type' => 'application/json; charset=utf-8')))->send();
                     }
                 }
             }
         } else {
             if ($output) {
-                (new Response($output))->send();
+                (new Response($output, 200, array("Content-Type" => "text/html; charset=utf-8")))->send();
             }
         }
     }
