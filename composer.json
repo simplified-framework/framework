@@ -36,9 +36,6 @@
           "Simplified\\Console\\":"console/src",
 		  "Simplified\\Core\\":"core/src/",
           "Simplified\\Log\\":"log/src"
-        },
-		"files": [
-			"http/src/helper.php"
-		]
+        }
     }
 }
