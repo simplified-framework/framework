@@ -26,7 +26,8 @@
 	  "simplified/database":"1.0.*",
       "simplified/cache":"1.0.*",
       "simplified/twigbridge":"1.0.*",
-      "simplified/validator":"1.0.*"
+      "simplified/validator":"1.0.*",
+	  "simplified/http-foundation":"1.0.*"
     },
     "autoload": {
           "psr-4": {
