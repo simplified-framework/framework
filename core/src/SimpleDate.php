@@ -12,11 +12,11 @@ namespace Simplified\Core;
 class SimpleDate extends Comparable {
     private $value;
 
-    public function __construct(mixed $date) {
+    public function __construct($date) {
         $this->setDate($date);
     }
 
-    public function setDate(mixed $date) {
+    public function setDate($date) {
         $value = 0;
         if (is_string($date))
             $value = date("Y-m-d", strtotime($date));
