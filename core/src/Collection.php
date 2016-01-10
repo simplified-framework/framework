@@ -1,107 +1,97 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Andreas
+ * Date: 10.01.2016
+ * Time: 11:38
+ */
 
 namespace Simplified\Core;
 
+class Collection implements Arrayable, ContainerInterface,
+    \ArrayAccess, \Countable, \Iterator {
 
-class Collection implements Arrayable, ContainerInterface, \Countable,
-                            \ArrayAccess, \Iterator
-{
-    protected $items = array();
-    private $pointer = -1;
+    private $container = array();
+    private $position;
 
-    public function __construct($items = array()) {
-        $this->pointer = 0;
-        if ($items != null && is_array($items)) {
-            if (array_keys($items) == $items) {
-                foreach ($items as $item)
-                    $this->add($item);
-            } else {
-                $this->items = $items;
-            }
-        }
+    public function __construct(array $items = array()) {
+        $this->container = $items;
+        $this->rewind();
+    }
+
+    public function toArray() {
+        return $this->container;
+    }
+
+    public function get($key) {
+        $this->offsetGet($key);
     }
 
     public function has($key) {
-        return isset($this->items[$key]) ||
-            in_array($key, $this->items);
+        return $this->offsetExists($key);
     }
 
-    public function get($key, $default = false) {
-        return $this->has($key) ? $this->items[$key] : $default;
+    public function add($key, $value) {
+        $this->offsetSet($key, $value);
     }
 
-    public function first() {
-        return $this->get(0);
+    public function offsetExists($offset) {
+        $keys = $this->keys();
+        return isset($keys[$offset]);
     }
 
-    public function last() {
-        return end($this->items);
-    }
-
-    public function all() {
-        return $this->items;
-    }
-
-    public function next() {
-        if ($this->has($this->pointer++)) {
-            return true;
+    public function offsetGet($offset) {
+        if ($this->offsetExists($offset)) {
+            $key = $this->keys()[$offset];
+            return $this->container[$key];
+        } else {
+            return false;
         }
-
-        return false;
     }
 
-    public function current() {
-        return $this->has($this->pointer) ?
-            $this->items[$this->pointer] : false;
+    public function offsetSet($offset, $value) {
+        $this->container[$offset] = $value;
     }
 
-    public function rewind() {
-        $this->pointer = 0;
-    }
-
-    public function valid() {
-        return $this->has($this->pointer);
-    }
-
-    public function key() {
-        return $this->pointer;
-    }
-
-    public function add($arg1, $arg2 = null) {
-        if (func_num_args() == 1) {
-            $this->items[] = $arg1;
-        }
-        else {
-            $key = $arg1;
-            $this->items[$key] = $arg2;
+    public function offsetUnset($offset) {
+        if ($this->offsetExists($offset)) {
+            unset($this->container[$offset]);
         }
     }
 
     public function count() {
-        return count ($this->items);
+        return count($this->container);
     }
 
-    public function toArray() {
-        return is_array($this->items) ? $this->items : array();
+    public function keys() {
+        return array_keys($this->container);
     }
 
-    public function offsetExists($offset) {
-        return isset($this->items[$offset]);
+    public function values() {
+        return array_values($this->container);
     }
 
-    public function offsetGet($offset) {
-        return $this->get($offset);
+    public function all() {
+        return $this->container;
     }
 
-    public function offsetSet($offset ,$value) {
-        if (is_null($offset)) {
-            $this->items[] = $value;
-        } else {
-            $this->items[$offset] = $value;
-        }
+    public function current() {
+        return $this->offsetGet($this->position);
     }
 
-    public function offsetUnset($offset) {
-        unset($this->items[$offset]);
+    public function next() {
+        $this->position++;
+    }
+
+    public function key() {
+        return $this->position;
+    }
+
+    public function valid() {
+        return $this->offsetExists($this->position);
+    }
+
+    public function rewind() {
+        $this->position = 0;
     }
 }
