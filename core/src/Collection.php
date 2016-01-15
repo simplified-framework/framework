@@ -36,21 +36,26 @@ class Collection implements Arrayable, ContainerInterface,
     }
 
     public function offsetExists($offset) {
-        $keys = $this->keys();
-        return isset($keys[$offset]);
+        return isset($this->container[$offset]) ||
+        ($offset >= 0 && $offset < $this->count());
     }
 
     public function offsetGet($offset) {
-        if ($this->offsetExists($offset)) {
-            $key = $this->keys()[$offset];
-            return $this->container[$key];
-        } else {
-            return false;
+        $keys = $this->keys();
+        if (isset($keys[$offset])) {
+            $k = $keys[$offset];
+            return $this->container[$k];
         }
+
+        return $this->container[$offset];
     }
 
     public function offsetSet($offset, $value) {
-        $this->container[$offset] = $value;
+        if (is_null($offset)) {
+            $this->container[] = $value;
+        } else {
+            $this->container[$offset] = $value;
+        }
     }
 
     public function offsetUnset($offset) {
@@ -84,11 +89,11 @@ class Collection implements Arrayable, ContainerInterface,
     }
 
     public function key() {
-        return $this->position;
+        return key($this->container);
     }
 
     public function valid() {
-        return $this->offsetExists($this->position);
+        return $this->current() !== false;
     }
 
     public function rewind() {
