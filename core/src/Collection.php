@@ -24,7 +24,7 @@ class Collection implements Arrayable, ContainerInterface,
     }
 
     public function get($key) {
-        $this->offsetGet($key);
+        return $this->container[$key];
     }
 
     public function has($key) {
@@ -32,30 +32,29 @@ class Collection implements Arrayable, ContainerInterface,
     }
 
     public function add($key, $value) {
-        $this->offsetSet($key, $value);
+        $this->container[$key] = $value;
     }
 
     public function offsetExists($offset) {
-        return isset($this->container[$offset]) ||
-        ($offset >= 0 && $offset < $this->count());
+        return ($offset >= 0 && $offset < $this->count());
     }
 
     public function offsetGet($offset) {
-        $keys = $this->keys();
-        if (isset($keys[$offset])) {
+        if ($offset > $this->count())
+            throw new \InvalidArgumentException("offset $offset is greater than collection({$this->count()})");
+
+        if (is_numeric($offset)) {
+            $keys = array_keys($this->container);
             $k = $keys[$offset];
-            return $this->container[$k];
+        } else {
+            $k = $offset;
         }
 
-        return $this->container[$offset];
+        return $this->container[$k];
     }
 
     public function offsetSet($offset, $value) {
-        if (is_null($offset)) {
-            $this->container[] = $value;
-        } else {
-            $this->container[$offset] = $value;
-        }
+        $this->container[$offset] = $value;
     }
 
     public function offsetUnset($offset) {
@@ -81,7 +80,10 @@ class Collection implements Arrayable, ContainerInterface,
     }
 
     public function current() {
-        return $this->offsetGet($this->position);
+        $item = $this->valid() ?
+            $this->offsetGet($this->position) : false;
+
+        return $item;
     }
 
     public function next() {
@@ -93,7 +95,7 @@ class Collection implements Arrayable, ContainerInterface,
     }
 
     public function valid() {
-        return $this->current() !== false;
+        return $this->offsetExists($this->position);
     }
 
     public function rewind() {
