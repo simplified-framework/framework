@@ -66,7 +66,7 @@ class Migrate extends Command {
                 if ($entry != "." && $entry != ".." && !is_dir($entry)) {
                     if (endsWith($entry, ".php")) {
                         $basename = basename($entry, '.php');
-                        $ret = $conn->raw("select migration from `migrations` where migration='$basename' limit 1");
+                        $ret = $conn->raw("select name from `migrations` where name='$basename' limit 1");
                         if ($ret != null && $ret->rowCount() == 1)
                             continue;
                         $files[] = $migrations_path . DIRECTORY_SEPARATOR . $entry;
@@ -96,7 +96,7 @@ class Migrate extends Command {
                     $instance->up();
 
                     // register migration in database
-                    $conn->raw('insert into migrations (migration) VALUES ("'.basename($file, '.php').'")');
+                    $conn->raw('insert into migrations (name,created_at) VALUES ("'.basename($file, '.php').'",null)');
                     $output->writeln('Migrated table class ' . $clazz);
                 }
             }
