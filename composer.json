@@ -20,6 +20,7 @@
       "jms/serializer":"1.*",
       "phpcollection/phpcollection":"0.*",
       "swiftmailer/swiftmailer":"5.*",
+      "claviska/SimpleImage":"2.6.*",
       "simplified/view":"1.0.*",
       "simplified/forms":"1.0.*",
 	  "simplified/session":"1.0.*",
