@@ -36,9 +36,9 @@ class MakeMigrate extends Command {
         $script = $input->getArgument('name');
         $table  = $input->getOption('table');
         if (empty($table))
-            throw new IllegalArgumentException('Not enough arguments (missing: [-t|--table])');
+            $table = Inflector::tableize($script);
 
-        $file = $migrations_path . DIRECTORY_SEPARATOR . time() . "_$script.php";
+        $file = $migrations_path . DIRECTORY_SEPARATOR . date('Y_m_d_His',time()) . "_$script.php";
         $output->writeln('creating script ' . $file);
 
         $table = strtolower($table);
